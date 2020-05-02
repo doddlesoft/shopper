@@ -11,7 +11,7 @@ class CreateListTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    function the_shopping_list_is_created()
+    public function the_shopping_list_is_created()
     {
         app(CreateList::class)->perform('Test Shopping List');
 
