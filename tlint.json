@@ -1,0 +1,10 @@
+{
+    "preset": "tighten",
+    "disabled": [
+      "ConcatenationSpacing",
+      "NoMethodVisibilityInTests"
+    ],
+    "excluded": [
+      "_ide_helper.php"
+    ]
+  }
