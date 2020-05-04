@@ -15,4 +15,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::namespace('Api')->group(function () {
     Route::post('lists', 'ListController@store')->name('lists.store');
+    Route::patch('lists/{list}', 'ListController@update')->name('lists.update');
 });
