@@ -1,0 +1,36 @@
+name: Tests (PHP)
+
+on:
+  push:
+
+jobs:
+  tests:
+    name: Run Tests
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v1
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - name: Run composer install
+        run: composer install -n --prefer-dist
+
+      - name: Run tests
+        run: ./vendor/bin/phpunit
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@master
+        if: failure()
+        with:
+          name: Logs
+          path: ./storage/logs

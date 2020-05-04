@@ -1,0 +1,26 @@
+name: Format (PHP)
+
+on:
+  push:
+    paths:
+      - '**.php'
+
+jobs:
+  php-cs-fixer:
+    name: Format with PHP-CS-Fixer
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run php-cs-fixer
+        uses: docker://oskarstark/php-cs-fixer-ga
+
+      - uses: stefanzweifel/git-auto-commit-action@v4.1.2
+        with:
+          commit_message: Apply php-cs-fixer changes
+          branch: ${{ github.head_ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
