@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::namespace('Api')->group(function () {
+    Route::get('lists', 'ListController@index')->name('lists.index');
     Route::post('lists', 'ListController@store')->name('lists.store');
+    Route::get('lists/{list}', 'ListController@show')->name('lists.show');
     Route::patch('lists/{list}', 'ListController@update')->name('lists.update');
+    Route::delete('lists/{list}', 'ListController@destroy')->name('lists.destroy');
 });

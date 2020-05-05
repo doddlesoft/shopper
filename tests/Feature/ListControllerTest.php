@@ -12,6 +12,32 @@ class ListControllerTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
+    public function getting_all_shopping_lists()
+    {
+        $list1 = factory(Liste::class)->create();
+        $list2 = factory(Liste::class)->create();
+
+        $response = $this->getJson(route('lists.index'));
+
+        $response->assertJsonFragment(['name' => $list1->name]);
+        $response->assertJsonFragment(['name' => $list2->name]);
+    }
+
+    /** @test */
+    public function getting_a_shopping_list()
+    {
+        $list = factory(Liste::class)->create(['name' => 'Test Shopping List']);
+
+        $response = $this->getJson(route('lists.show', $list));
+
+        $response
+            ->assertOk()
+            ->assertJson([
+                'name' => 'Test Shopping List',
+            ]);
+    }
+
+    /** @test */
     public function creating_a_shopping_list()
     {
         $response = $this->postJson(route('lists.store'), ['name' => 'Test Shopping List']);
@@ -28,7 +54,7 @@ class ListControllerTest extends TestCase
     /** @test */
     public function updating_a_shopping_list()
     {
-        $list = factory(Liste::class)->create(['name' => 'New Shopping List']);
+        $list = factory(Liste::class)->create(['name' => 'Test Shopping List']);
 
         $response = $this->patchJson(route('lists.update', $list), ['name' => 'Updated Shopping List']);
 
@@ -38,8 +64,21 @@ class ListControllerTest extends TestCase
                 'name' => 'Updated Shopping List',
             ]);
 
-        $this->assertDatabaseMissing('lists', ['name' => 'New Shopping List']);
+        $this->assertDatabaseMissing('lists', ['name' => 'Test Shopping List']);
         $this->assertDatabaseHas('lists', ['name' => 'Updated Shopping List']);
+    }
+
+    /** @test */
+    public function deleting_a_shopping_list()
+    {
+        $list = factory(Liste::class)->create(['name' => 'Test Shopping List']);
+
+        $response = $this->deleteJson(route('lists.destroy', $list));
+
+        $response->assertStatus(204);
+
+        $this->assertDatabaseMissing('lists', ['name' => 'Test Shopping List']);
+        $this->assertEquals(0, Liste::count());
     }
 
     /**
