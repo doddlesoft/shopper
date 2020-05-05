@@ -55,6 +55,11 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
+        "fix": "./vendor/bin/php-cs-fixer fix",
+        "insights": "php artisan insights",
+        "lint": "tlint",
+        "stan": "./vendor/bin/phpstan analyse",
+        "stats": "php artisan stats",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
