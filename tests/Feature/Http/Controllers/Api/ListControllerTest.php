@@ -32,7 +32,7 @@ class ListControllerTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertJson([
+            ->assertJsonFragment([
                 'name' => 'Test Shopping List',
             ]);
     }
@@ -44,7 +44,7 @@ class ListControllerTest extends TestCase
 
         $response
             ->assertCreated()
-            ->assertJson([
+            ->assertJsonFragment([
                 'name' => 'Test Shopping List',
             ]);
 
@@ -60,7 +60,7 @@ class ListControllerTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertJson([
+            ->assertJsonFragment([
                 'name' => 'Updated Shopping List',
             ]);
 
