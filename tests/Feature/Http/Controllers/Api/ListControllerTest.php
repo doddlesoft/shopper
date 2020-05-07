@@ -19,8 +19,10 @@ class ListControllerTest extends TestCase
 
         $response = $this->getJson(route('lists.index'));
 
-        $response->assertJsonFragment(['name' => $list1->name]);
-        $response->assertJsonFragment(['name' => $list2->name]);
+        $response
+            ->assertOk()
+            ->assertJsonFragment(['name' => $list1->name])
+            ->assertJsonFragment(['name' => $list2->name]);
     }
 
     /** @test */
@@ -85,9 +87,23 @@ class ListControllerTest extends TestCase
      * @test
      * @dataProvider nameInputValidation
      */
-    public function test_form_validation($formInput, $formInputValue)
+    public function test_store_form_validation($formInput, $formInputValue)
     {
-        $response = $this->postJson(route('lists.store', [$formInput => $formInputValue]));
+        $response = $this->postJson(route('lists.store'), [$formInput => $formInputValue]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors($formInput);
+    }
+
+    /**
+     * @test
+     * @dataProvider nameInputValidation
+     */
+    public function test_update_form_validation($formInput, $formInputValue)
+    {
+        $list = factory(Liste::class)->create(['name' => 'Test Shopping List']);
+
+        $response = $this->patchJson(route('lists.update', $list), [$formInput => $formInputValue]);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors($formInput);

@@ -1,9 +1,9 @@
 <?php
 
-use App\Liste;
+use App\Item;
 use Faker\Generator as Faker;
 
-$factory->define(Liste::class, function (Faker $faker) {
+$factory->define(Item::class, function (Faker $faker) {
     return [
         'name' => $faker->word,
     ];

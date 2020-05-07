@@ -19,4 +19,8 @@ Route::namespace('Api')->group(function () {
     Route::get('lists/{list}', 'ListController@show')->name('lists.show');
     Route::patch('lists/{list}', 'ListController@update')->name('lists.update');
     Route::delete('lists/{list}', 'ListController@destroy')->name('lists.destroy');
+    Route::get('lists/{list}/items', 'ListItemController@index')->name('lists.items.index');
+    Route::post('lists/{list}/items', 'ListItemController@store')->name('lists.items.store');
+    Route::patch('lists/{list}/items/{item}', 'ListItemController@update')->name('lists.items.update');
+    Route::delete('lists/{list}/items/{item}', 'ListItemController@destroy')->name('lists.items.destroy');
 });
