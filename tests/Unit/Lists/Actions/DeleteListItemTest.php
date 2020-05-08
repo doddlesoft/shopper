@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Item;
 use App\Liste;
+use App\ListItem;
 use App\Lists\Actions\DeleteListItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -27,7 +28,7 @@ class DeleteListItemTest extends TestCase
     }
 
     /** @test */
-    public function deleting_an_item_used_on_another_list_only_removes_the_item_from_the_specified_list()
+    public function deleting_an_item_used_on_another_list_only_detaches_the_item_from_the_specified_list()
     {
         $item = factory(Item::class)->create(['name' => 'Test Shopping List Item']);
         $list1 = factory(Liste::class)->create();
@@ -43,5 +44,6 @@ class DeleteListItemTest extends TestCase
         $this->assertEquals(1, $list1->items->count());
         $this->assertDatabaseMissing('item_list', ['item_id' => $item->id, 'list_id' => $list2->id]);
         $this->assertEquals(0, $list2->items->count());
+        $this->assertEquals(1, ListItem::count());
     }
 }
