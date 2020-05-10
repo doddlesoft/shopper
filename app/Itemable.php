@@ -4,8 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class ListItem extends Pivot
+class Itemable extends Pivot
 {
-    protected $table = 'item_list';
+    protected $table = 'itemables';
     protected $guarded = [];
 }

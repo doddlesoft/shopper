@@ -6,7 +6,7 @@ class Item extends Model
 {
     public function lists()
     {
-        return $this->belongsToMany(Liste::class, 'item_list', 'item_id', 'list_id');
+        return $this->morphedByMany(Liste::class, 'itemable');
     }
 
     public function existsOnAnotherList($notThisList)

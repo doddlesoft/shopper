@@ -3,8 +3,8 @@
 namespace Tests\Unit\Lists\Actions;
 
 use App\Item;
+use App\Itemable;
 use App\Liste;
-use App\ListItem;
 use App\Lists\Actions\DeleteList;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -37,7 +37,7 @@ class DeleteListTest extends TestCase
         $this->assertEquals(0, Item::count());
         $this->assertDatabaseMissing('lists', ['name' => 'Test Shopping List']);
         $this->assertEquals(0, Liste::count());
-        $this->assertEquals(0, ListItem::count());
+        $this->assertEquals(0, Itemable::count());
     }
 
     /** @test */
@@ -58,10 +58,22 @@ class DeleteListTest extends TestCase
         $this->assertDatabaseHas('lists', ['name' => 'First Shopping List']);
         $this->assertDatabaseMissing('lists', ['name' => 'Second Shopping List']);
         $this->assertEquals(1, Liste::count());
-        $this->assertDatabaseHas('item_list', ['item_id' => $item1->id, 'list_id' => $list1->id]);
+        $this->assertDatabaseHas('itemables', [
+            'item_id' => $item1->id,
+            'itemable_id' => $list1->id,
+            'itemable_type' => 'lists',
+        ]);
         $this->assertEquals(1, $list1->items->count());
-        $this->assertDatabaseMissing('item_list', ['item_id' => $item1->id, 'list_id' => $list2->id]);
-        $this->assertDatabaseMissing('item_list', ['item_id' => $item2->id, 'list_id' => $list2->id]);
-        $this->assertEquals(1, ListItem::count());
+        $this->assertDatabaseMissing('itemables', [
+            'item_id' => $item1->id,
+            'itemable_id' => $list2->id,
+            'itemable_type' => 'lists',
+        ]);
+        $this->assertDatabaseMissing('itemables', [
+            'item_id' => $item2->id,
+            'itemable_id' => $list2->id,
+            'itemable_type' => 'lists',
+        ]);
+        $this->assertEquals(1, Itemable::count());
     }
 }

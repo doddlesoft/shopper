@@ -3,9 +3,9 @@
 namespace Tests\Unit\Items\Actions;
 
 use App\Item;
+use App\Itemable;
 use App\Items\Actions\DeleteItem;
 use App\Liste;
-use App\ListItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -55,10 +55,18 @@ class DeleteItemTest extends TestCase
 
         $this->assertDatabaseHas('items', ['name' => 'Test Shopping List Item']);
         $this->assertEquals(1, Item::count());
-        $this->assertDatabaseHas('item_list', ['item_id' => $item->id, 'list_id' => $list1->id]);
+        $this->assertDatabaseHas('itemables', [
+            'item_id' => $item->id,
+            'itemable_id' => $list1->id,
+            'itemable_type' => 'lists',
+        ]);
         $this->assertEquals(1, $list1->items->count());
-        $this->assertDatabaseMissing('item_list', ['item_id' => $item->id, 'list_id' => $list2->id]);
+        $this->assertDatabaseMissing('itemables', [
+            'item_id' => $item->id,
+            'itemable_id' => $list2->id,
+            'itemable_type' => 'lists',
+        ]);
         $this->assertEquals(0, $list2->items->count());
-        $this->assertEquals(1, ListItem::count());
+        $this->assertEquals(1, Itemable::count());
     }
 }

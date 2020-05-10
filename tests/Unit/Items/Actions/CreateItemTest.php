@@ -35,7 +35,11 @@ class CreateItemTest extends TestCase
 
         $this->assertDatabaseHas('items', ['name' => 'Test Shopping List Item']);
         $this->assertEquals(1, Item::count());
-        $this->assertDatabaseHas('item_list', ['item_id' => $item->id, 'list_id' => $list->id]);
+        $this->assertDatabaseHas('itemables', [
+            'item_id' => $item->id,
+            'itemable_id' => $list->id,
+            'itemable_type' => 'lists'
+        ]);
         $this->assertEquals(1, $list->items->count());
     }
 
@@ -52,7 +56,11 @@ class CreateItemTest extends TestCase
 
         $this->assertDatabaseHas('items', ['name' => $item->name]);
         $this->assertEquals(1, Item::count());
-        $this->assertDatabaseHas('item_list', ['item_id' => $item->id, 'list_id' => $list->id]);
+        $this->assertDatabaseHas('itemables', [
+            'item_id' => $item->id,
+            'itemable_id' => $list->id,
+            'itemable_type' => 'lists'
+        ]);
         $this->assertEquals(1, $list->items->count());
     }
 }

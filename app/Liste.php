@@ -8,6 +8,6 @@ class Liste extends Model
 
     public function items()
     {
-        return $this->belongsToMany(Item::class, 'item_list', 'list_id');
+        return $this->morphToMany(Item::class, 'itemable');
     }
 }
