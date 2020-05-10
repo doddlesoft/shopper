@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Lists\Actions;
 
 use App\Item;
 use App\Liste;

@@ -1,26 +1,27 @@
 <?php
 
-namespace Tests\Unit\Lists\Actions;
+namespace Tests\Unit\Items\Actions;
 
 use App\Item;
+use App\Items\Actions\UpdateItem;
 use App\Liste;
-use App\Lists\Actions\CreateListItem;
-use App\Lists\Actions\UpdateListItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class UpdateListItemTest extends TestCase
+class UpdateItemTest extends TestCase
 {
     use RefreshDatabase;
 
     /** @test */
-    public function the_shopping_list_item_is_updated()
+    public function the_item_is_updated()
     {
         $item = factory(Item::class)->create(['name' => 'New Shopping List Item']);
         $list = factory(Liste::class)->create();
         $list->items()->attach($item);
 
-        app(UpdateListItem::class)->perform($list, $item, 'Updated Shopping List Item');
+        app(UpdateItem::class)
+            ->forList($list)
+            ->perform($item, 'Updated Shopping List Item');
 
         $this->assertDatabaseMissing('items', ['name' => 'New Shopping List Item']);
         $this->assertDatabaseHas('items', ['name' => 'Updated Shopping List Item']);
@@ -38,7 +39,9 @@ class UpdateListItemTest extends TestCase
         $list2 = factory(Liste::class)->create();
         $list2->items()->attach($item);
 
-        $item2 = app(UpdateListItem::class)->perform($list2, $item, 'Second Shopping List Item');
+        $item2 = app(UpdateItem::class)
+            ->forList($list2)
+            ->perform($item, 'Second Shopping List Item');
 
         $this->assertDatabaseHas('items', ['name' => 'First Shopping List Item']);
         $this->assertDatabaseHas('items', ['name' => 'Second Shopping List Item']);
@@ -59,7 +62,9 @@ class UpdateListItemTest extends TestCase
         $list2 = factory(Liste::class)->create();
         $list2->items()->attach($item1);
 
-        $item2 = app(UpdateListItem::class)->perform($list2, $item1, 'Second Shopping List Item');
+        $item2 = app(UpdateItem::class)
+            ->forList($list2)
+            ->perform($item1, 'Second Shopping List Item');
 
         $this->assertDatabaseHas('items', ['name' => 'First Shopping List Item']);
         $this->assertDatabaseHas('items', ['name' => 'Second Shopping List Item']);

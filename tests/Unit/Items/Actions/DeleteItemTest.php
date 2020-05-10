@@ -1,15 +1,15 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Items\Actions;
 
 use App\Item;
+use App\Items\Actions\DeleteItem;
 use App\Liste;
 use App\ListItem;
-use App\Lists\Actions\DeleteListItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class DeleteListItemTest extends TestCase
+class DeleteItemTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -20,7 +20,9 @@ class DeleteListItemTest extends TestCase
         $list = factory(Liste::class)->create();
         $list->items()->attach($item);
 
-        app(DeleteListItem::class)->perform($list, $item);
+        app(DeleteItem::class)
+            ->fromList($list)
+            ->perform($item);
 
         $this->assertDatabaseMissing('items', ['name' => 'Test Shopping List Item']);
         $this->assertEquals(0, Item::count());
@@ -36,7 +38,9 @@ class DeleteListItemTest extends TestCase
         $list2 = factory(Liste::class)->create();
         $list2->items()->attach($item);
 
-        app(DeleteListItem::class)->perform($list2, $item);
+        app(DeleteItem::class)
+            ->fromList($list2)
+            ->perform($item);
 
         $this->assertDatabaseHas('items', ['name' => 'Test Shopping List Item']);
         $this->assertEquals(1, Item::count());

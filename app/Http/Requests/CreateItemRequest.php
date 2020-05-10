@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateListItemRequest extends FormRequest
+class CreateItemRequest extends FormRequest
 {
     public function authorize()
     {
@@ -14,7 +14,8 @@ class UpdateListItemRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|max:250',
+            'item_id' => 'required_without:name|nullable|integer',
+            'name' => 'required_without:item_id|nullable|max:250',
         ];
     }
 }

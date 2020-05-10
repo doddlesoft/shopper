@@ -1,25 +1,37 @@
 <?php
 
-namespace Tests\Unit\Lists\Actions;
+namespace Tests\Unit\Items\Actions;
 
 use App\Item;
+use App\Items\Actions\CreateItem;
 use App\Liste;
-use App\Lists\Actions\CreateListItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class CreateListItemTest extends TestCase
+class CreateItemTest extends TestCase
 {
     use RefreshDatabase;
 
     /** @test */
-    public function the_new_shopping_list_item_is_created()
+    public function the_new_item_is_created()
+    {
+        app(CreateItem::class)
+            ->called('Test Shopping List Item')
+            ->perform();
+
+        $this->assertDatabaseHas('items', ['name' => 'Test Shopping List Item']);
+        $this->assertEquals(1, Item::count());
+    }
+
+    /** @test */
+    public function creating_an_item_for_a_shopping_list()
     {
         $list = factory(Liste::class)->create();
 
-        $item = app(CreateListItem::class)
-            ->itemName('Test Shopping List Item')
-            ->perform($list);
+        $item = app(CreateItem::class)
+            ->called('Test Shopping List Item')
+            ->forList($list)
+            ->perform();
 
         $this->assertDatabaseHas('items', ['name' => 'Test Shopping List Item']);
         $this->assertEquals(1, Item::count());
@@ -28,14 +40,15 @@ class CreateListItemTest extends TestCase
     }
 
     /** @test */
-    public function adding_an_existing_item_to_a_shopping_list_doesnt_create_a_new_item()
+    public function adding_an_existing_item_to_a_shopping_list()
     {
         $item = factory(Item::class)->create();
         $list = factory(Liste::class)->create();
 
-        app(CreateListItem::class)
-            ->itemId($item->id)
-            ->perform($list);
+        app(CreateItem::class)
+            ->from($item)
+            ->forList($list)
+            ->perform();
 
         $this->assertDatabaseHas('items', ['name' => $item->name]);
         $this->assertEquals(1, Item::count());
