@@ -3,7 +3,6 @@
 namespace App\Items\Actions;
 
 use App\Item;
-use App\Items\Actions\CreateItem;
 use App\Liste;
 
 class UpdateItem
