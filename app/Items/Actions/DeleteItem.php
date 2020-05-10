@@ -11,9 +11,11 @@ class DeleteItem
 
     public function perform(Item $item)
     {
-        $this->list->items()->detach($item);
+        if ($this->list !== null) {
+            $this->list->items()->detach($item);
+        }
 
-        if (! $item->existsOnAnotherList($this->list)) {
+        if ($item->lists->count() === 0) {
             $item->delete();
         }
     }

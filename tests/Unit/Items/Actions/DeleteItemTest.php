@@ -14,6 +14,17 @@ class DeleteItemTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
+    public function the_item_is_deleted()
+    {
+        $item = factory(Item::class)->create(['name' => 'Test Shopping List Item']);
+
+        app(DeleteItem::class)->perform($item);
+
+        $this->assertDatabaseMissing('items', ['name' => 'Test Shopping List Item']);
+        $this->assertEquals(0, Item::count());
+    }
+
+    /** @test */
     public function the_shopping_list_item_is_deleted()
     {
         $item = factory(Item::class)->create(['name' => 'Test Shopping List Item']);
