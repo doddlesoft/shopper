@@ -38,7 +38,7 @@ class CreateItemTest extends TestCase
         $this->assertDatabaseHas('itemables', [
             'item_id' => $item->id,
             'itemable_id' => $list->id,
-            'itemable_type' => 'lists'
+            'itemable_type' => 'lists',
         ]);
         $this->assertEquals(1, $list->items->count());
     }
@@ -59,7 +59,7 @@ class CreateItemTest extends TestCase
         $this->assertDatabaseHas('itemables', [
             'item_id' => $item->id,
             'itemable_id' => $list->id,
-            'itemable_type' => 'lists'
+            'itemable_type' => 'lists',
         ]);
         $this->assertEquals(1, $list->items->count());
     }
