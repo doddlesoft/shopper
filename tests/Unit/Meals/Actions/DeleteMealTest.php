@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Meals\Actions;
 
 use App\Meal;
 use App\Meals\Actions\DeleteMeal;

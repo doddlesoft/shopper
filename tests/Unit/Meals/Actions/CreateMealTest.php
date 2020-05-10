@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Lists\Actions;
+namespace Tests\Unit\Meals\Actions;
 
 use App\Meals\Actions\CreateMeal;
 use Illuminate\Foundation\Testing\RefreshDatabase;

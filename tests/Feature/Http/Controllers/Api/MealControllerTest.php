@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Http\Controller\Api;
 
 use App\Meal;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -56,7 +56,6 @@ class MealControllerTest extends TestCase
     /** @test */
     public function updating_a_meal()
     {
-        $this->withoutExceptionHandling();
         $meal = factory(Meal::class)->create(['name' => 'Test Meal']);
 
         $response = $this->patchJson(route('meals.update', $meal), ['name' => 'Updated Meal']);
