@@ -14,11 +14,11 @@ class UpdateMealTest extends TestCase
     /** @test */
     public function the_meal_is_updated()
     {
-        $meal = factory(Meal::class)->create(['name' => 'New Meal']);
+        $meal = factory(Meal::class)->create(['name' => 'Test Meal']);
 
         app(UpdateMeal::class)->perform($meal, 'Updated Meal');
 
-        $this->assertDatabaseMissing('meals', ['name' => 'New Meal']);
+        $this->assertDatabaseMissing('meals', ['name' => 'Test Meal']);
         $this->assertDatabaseHas('meals', ['name' => 'Updated Meal']);
     }
 }

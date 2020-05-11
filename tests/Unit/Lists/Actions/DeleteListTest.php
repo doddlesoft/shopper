@@ -43,8 +43,8 @@ class DeleteListTest extends TestCase
     /** @test */
     public function deleting_a_list_that_contains_an_item_used_on_another_list_only_detaches_that_item_from_the_specified_list()
     {
-        $item1 = factory(Item::class)->create(['name' => 'Test Shopping List Item']);
-        $item2 = factory(Item::class)->create(['name' => 'Test Shopping List Item']);
+        $item1 = factory(Item::class)->create(['name' => 'First Item']);
+        $item2 = factory(Item::class)->create(['name' => 'Second Item']);
         $list1 = factory(Liste::class)->create(['name' => 'First Shopping List']);
         $list1->items()->attach($item1);
         $list2 = factory(Liste::class)->create(['name' => 'Second Shopping List']);
@@ -53,7 +53,7 @@ class DeleteListTest extends TestCase
 
         app(DeleteList::class)->perform($list2);
 
-        $this->assertDatabaseHas('items', ['name' => 'Test Shopping List Item']);
+        $this->assertDatabaseHas('items', ['name' => 'First Item']);
         $this->assertEquals(1, Item::count());
         $this->assertDatabaseHas('lists', ['name' => 'First Shopping List']);
         $this->assertDatabaseMissing('lists', ['name' => 'Second Shopping List']);

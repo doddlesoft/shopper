@@ -3,26 +3,30 @@
 namespace App\Items\Actions;
 
 use App\Item;
-use App\Liste;
+use App\Model;
 
 class DeleteItem
 {
-    private $list;
+    private $itemable;
 
-    public function perform(Item $item)
+    public function perform(Item $item): void
     {
-        if ($this->list !== null) {
-            $this->list->items()->detach($item);
+        if ($this->itemable !== null) {
+            $this->itemable->items()->detach($item);
         }
 
-        if ($item->lists->count() === 0) {
+        if ($this->itemable === null) {
+            $item->itemables()->delete();
+        }
+
+        if ($item->itemables->count() === 0) {
             $item->delete();
         }
     }
 
-    public function fromList(Liste $list): self
+    public function from(Model $itemable): self
     {
-        $this->list = $list;
+        $this->itemable = $itemable;
 
         return $this;
     }

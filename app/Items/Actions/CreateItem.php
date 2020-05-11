@@ -3,20 +3,20 @@
 namespace App\Items\Actions;
 
 use App\Item;
-use App\Liste;
+use App\Model;
 
 class CreateItem
 {
     private $name;
-    private $list;
     private $item;
+    private $itemable;
 
     public function perform(): Item
     {
         $item = $this->item ?? Item::firstOrCreate(['name' => $this->name]);
 
-        if ($this->list !== null) {
-            $this->list->items()->attach($item);
+        if ($this->itemable !== null) {
+            $this->itemable->items()->attach($item);
         }
 
         return $item;
@@ -36,9 +36,9 @@ class CreateItem
         return $this;
     }
 
-    public function forList(?Liste $list = null): self
+    public function for(Model $itemable): self
     {
-        $this->list = $list;
+        $this->itemable = $itemable;
 
         return $this;
     }

@@ -10,6 +10,7 @@ use App\Items\Actions\CreateItem;
 use App\Items\Actions\DeleteItem;
 use App\Items\Actions\UpdateItem;
 use App\Liste;
+use App\Meal;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
@@ -21,34 +22,57 @@ class ItemController
             return ItemResource::collection(Liste::findOrFail(request()->query('list_id'))->items);
         }
 
+        if (request()->filled('meal_id')) {
+            return ItemResource::collection(Meal::findOrFail(request()->query('meal_id'))->items);
+        }
+
         return ItemResource::collection(Item::all());
     }
 
     public function store(CreateItemRequest $request, CreateItem $action): ItemResource
     {
+        if ($request->filled('list_id')) {
+            $action->for(Liste::find($request->input('list_id')));
+        }
+
+        if ($request->filled('meal_id')) {
+            $action->for(Meal::find($request->input('meal_id')));
+        }
+
         return new ItemResource(
             $action
                 ->called($request->input('name'))
                 ->from(Item::find($request->input('item_id')))
-                ->forList(Liste::find($request->input('list_id')))
                 ->perform()
         );
     }
 
     public function update(Item $item, UpdateItemRequest $request, UpdateItem $action): ItemResource
     {
+        if ($request->filled('list_id')) {
+            $action->for(Liste::find($request->input('list_id')), 'lists');
+        }
+
+        if ($request->filled('meal_id')) {
+            $action->for(Meal::find($request->input('meal_id')), 'meals');
+        }
+
         return new ItemResource(
-            $action
-                ->forList(Liste::find($request->input('list_id')))
-                ->perform($item, $request->input('name'))
+            $action->perform($item, $request->input('name'))
         );
     }
 
     public function destroy(Item $item, DeleteItem $action): Response
     {
-        $action
-            ->fromList(Liste::find(request()->input('list_id')))
-            ->perform($item);
+        if (request()->filled('list_id')) {
+            $action->from(Liste::find(request()->input('list_id')));
+        }
+
+        if (request()->filled('meal_id')) {
+            $action->from(Meal::find(request()->input('meal_id')));
+        }
+
+        $action->perform($item);
 
         return response()->noContent();
     }

@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Item;
 use App\Liste;
+use App\Meal;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,25 +13,25 @@ class ItemTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function when_an_item_doesnt_exist_on_another_list()
+    public function when_an_item_isnt_used_elsewhere()
     {
         $item = factory(Item::class)->create();
         $list = factory(Liste::class)->create();
         $list->items()->attach($item);
 
-        $this->assertFalse($item->existsOnAnotherList($list));
+        $this->assertFalse($item->usedElsewhere($list->id, 'lists'));
     }
 
     /** @test */
-    public function when_an_item_does_exist_on_another_list()
+    public function when_an_item_is_used_elsewhere()
     {
         $item = factory(Item::class)->create();
-        $list1 = factory(Liste::class)->create();
-        $list1->items()->attach($item);
-        $list2 = factory(Liste::class)->create();
-        $list2->items()->attach($item);
+        $list = factory(Liste::class)->create();
+        $list->items()->attach($item);
+        $meal = factory(Meal::class)->create();
+        $meal->items()->attach($item);
 
-        $this->assertTrue($item->existsOnAnotherList($list1));
-        $this->assertTrue($item->existsOnAnotherList($list2));
+        $this->assertTrue($item->usedElsewhere($list->id, 'lists'));
+        $this->assertTrue($item->usedElsewhere($meal->id, 'meals'));
     }
 }

@@ -11,7 +11,7 @@ class DeleteList
     {
         $list->items->each(function ($item) use ($list) {
             app(DeleteItem::class)
-                ->fromList($list)
+                ->from($list)
                 ->perform($item);
         });
 

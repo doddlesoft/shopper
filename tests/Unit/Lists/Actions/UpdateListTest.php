@@ -14,11 +14,11 @@ class UpdateListTest extends TestCase
     /** @test */
     public function the_shopping_list_is_updated()
     {
-        $list = factory(Liste::class)->create(['name' => 'New Shopping List']);
+        $list = factory(Liste::class)->create(['name' => 'Test Shopping List']);
 
         app(UpdateList::class)->perform($list, 'Updated Shopping List');
 
-        $this->assertDatabaseMissing('lists', ['name' => 'New Shopping List']);
+        $this->assertDatabaseMissing('lists', ['name' => 'Test Shopping List']);
         $this->assertDatabaseHas('lists', ['name' => 'Updated Shopping List']);
     }
 }
