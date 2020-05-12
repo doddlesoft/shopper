@@ -4,18 +4,18 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\MealRequest;
 use App\Http\Resources\Meal as MealResource;
+use App\Http\Resources\MealCollection;
 use App\Meal;
 use App\Meals\Actions\CreateMeal;
 use App\Meals\Actions\DeleteMeal;
 use App\Meals\Actions\UpdateMeal;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
 class MealController
 {
-    public function index(): AnonymousResourceCollection
+    public function index(): MealCollection
     {
-        return MealResource::collection(Meal::all());
+        return new MealCollection(Meal::all());
     }
 
     public function store(MealRequest $request, CreateMeal $action): MealResource

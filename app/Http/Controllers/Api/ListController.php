@@ -3,19 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\ListRequest;
+use App\Http\Resources\ListCollection;
 use App\Http\Resources\Liste as ListResource;
 use App\Liste;
 use App\Lists\Actions\CreateList;
 use App\Lists\Actions\DeleteList;
 use App\Lists\Actions\UpdateList;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
 class ListController
 {
-    public function index(): AnonymousResourceCollection
+    public function index(): ListCollection
     {
-        return ListResource::collection(Liste::all());
+        return new ListCollection(Liste::all());
     }
 
     public function store(ListRequest $request, CreateList $action): ListResource

@@ -5,28 +5,28 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\CreateItemRequest;
 use App\Http\Requests\UpdateItemRequest;
 use App\Http\Resources\Item as ItemResource;
+use App\Http\Resources\ItemCollection;
 use App\Item;
 use App\Items\Actions\CreateItem;
 use App\Items\Actions\DeleteItem;
 use App\Items\Actions\UpdateItem;
 use App\Liste;
 use App\Meal;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
 class ItemController
 {
-    public function index(): AnonymousResourceCollection
+    public function index(): ItemCollection
     {
         if (request()->filled('list_id')) {
-            return ItemResource::collection(Liste::findOrFail(request()->query('list_id'))->items);
+            return new ItemCollection(Liste::findOrFail(request()->query('list_id'))->items);
         }
 
         if (request()->filled('meal_id')) {
-            return ItemResource::collection(Meal::findOrFail(request()->query('meal_id'))->items);
+            return new ItemCollection(Meal::findOrFail(request()->query('meal_id'))->items);
         }
 
-        return ItemResource::collection(Item::all());
+        return new ItemCollection(Item::all());
     }
 
     public function store(CreateItemRequest $request, CreateItem $action): ItemResource
