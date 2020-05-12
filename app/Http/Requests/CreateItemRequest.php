@@ -14,7 +14,7 @@ class CreateItemRequest extends FormRequest
     public function rules()
     {
         return [
-            'item_id' => 'required_without:name|nullable|integer',
+            'item_id' => 'required_without:name|nullable|integer|exists:items,id',
             'name' => 'required_without:item_id|nullable|max:250',
         ];
     }

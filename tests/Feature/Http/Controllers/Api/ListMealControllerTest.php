@@ -18,7 +18,7 @@ class ListMealControllerTest extends TestCase
         $meal = factory(Meal::class)->create();
         $list->meals()->attach($meal);
 
-        $response = $this->getJson(route('lists.meals.index', $list));
+        $response = $this->getJson(route('list-meals.index', $list));
 
         $response
             ->assertOk()
@@ -31,7 +31,7 @@ class ListMealControllerTest extends TestCase
         $list = factory(Liste::class)->create(['name' => 'Shopping List']);
         $meal = factory(Meal::class)->create(['name' => 'Meal']);
 
-        $response = $this->postJson(route('lists.meals.store', $list), ['meal_id' => $meal->id]);
+        $response = $this->postJson(route('list-meals.store', $list), ['meal_id' => $meal->id]);
 
         $response->assertStatus(204);
 
@@ -49,7 +49,7 @@ class ListMealControllerTest extends TestCase
     {
         $list = factory(Liste::class)->create();
 
-        $response = $this->postJson(route('lists.meals.store', $list), [$formInput => $formInputValue]);
+        $response = $this->postJson(route('list-meals.store', $list), [$formInput => $formInputValue]);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors($formInput);

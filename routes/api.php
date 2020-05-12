@@ -29,6 +29,6 @@ Route::namespace('Api')->group(function () {
     Route::get('meals/{meal}', 'MealController@show')->name('meals.show');
     Route::patch('meals/{meal}', 'MealController@update')->name('meals.update');
     Route::delete('meals/{meal}', 'MealController@destroy')->name('meals.destroy');
-    Route::get('lists/{list}/meals', 'ListMealController@index')->name('lists.meals.index');
-    Route::post('lists/{list}/meals', 'ListMealController@store')->name('lists.meals.store');
+    Route::get('list-meals/{list}', 'ListMealController@index')->name('list-meals.index');
+    Route::post('list-meals/{list}', 'ListMealController@store')->name('list-meals.store');
 });
