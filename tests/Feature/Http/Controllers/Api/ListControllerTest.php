@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Http\Controller\Api;
 
+use App\Item;
+use App\Itemable;
 use App\Liste;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
@@ -51,6 +53,32 @@ class ListControllerTest extends TestCase
             ]);
 
         $this->assertDatabaseHas('lists', ['name' => 'Test Shopping List']);
+    }
+
+    /** @test */
+    public function creating_a_shopping_list_from_another_shopping_list()
+    {
+        $list = factory(Liste::class)->create(['name' => 'First Shopping List']);
+        $item1 = factory(Item::class)->create(['name' => 'First Item']);
+        $item2 = factory(Item::class)->create(['name' => 'Second Item']);
+        $list->items()->attach([$item1->id, $item2->id]);
+        $this->assertEquals(2, Itemable::count());
+
+        $response = $this->postJson(route('lists.store'), [
+            'list_id' => $list->id,
+            'name' => 'Second Shopping List',
+        ]);
+
+        $response
+            ->assertCreated()
+            ->assertJsonFragment([
+                'name' => 'Second Shopping List',
+            ]);
+
+        $this->assertDatabaseHas('lists', ['name' => 'First Shopping List']);
+        $this->assertEquals(2, $list->items->count());
+        $this->assertDatabaseHas('lists', ['name' => 'Second Shopping List']);
+        $this->assertEquals(4, Itemable::count());
     }
 
     /** @test */

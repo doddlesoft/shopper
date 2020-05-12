@@ -20,6 +20,10 @@ class ListController
 
     public function store(ListRequest $request, CreateList $action): ListResource
     {
+        if ($request->filled('list_id')) {
+            $action->from(Liste::find($request->input('list_id')));
+        }
+
         return new ListResource($action->perform($request->input('name')));
     }
 
