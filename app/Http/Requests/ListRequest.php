@@ -15,6 +15,7 @@ class ListRequest extends FormRequest
     {
         return [
             'name' => 'required|max:250',
+            'only_incomplete' => 'boolean',
         ];
     }
 }

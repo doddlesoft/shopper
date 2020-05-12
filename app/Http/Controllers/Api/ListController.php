@@ -24,6 +24,10 @@ class ListController
             $action->from(Liste::find($request->input('list_id')));
         }
 
+        if ($request->boolean('only_incomplete')) {
+            $action->onlyIncomplete();
+        }
+
         return new ListResource($action->perform($request->input('name')));
     }
 

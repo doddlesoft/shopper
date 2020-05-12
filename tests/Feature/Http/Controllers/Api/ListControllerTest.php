@@ -82,6 +82,34 @@ class ListControllerTest extends TestCase
     }
 
     /** @test */
+    public function creating_a_shopping_list_from_another_shopping_list_with_only_incomplete_items()
+    {
+        $list = factory(Liste::class)->create(['name' => 'First Shopping List']);
+        $item1 = factory(Item::class)->create(['name' => 'First Item']);
+        $item2 = factory(Item::class)->create(['name' => 'Second Item']);
+        $list->items()->attach($item1, ['completed_at' => now()]);
+        $list->items()->attach($item2);
+        $this->assertEquals(2, Itemable::count());
+
+        $response = $this->postJson(route('lists.store'), [
+            'list_id' => $list->id,
+            'name' => 'Second Shopping List',
+            'only_incomplete' => true,
+        ]);
+
+        $response
+            ->assertCreated()
+            ->assertJsonFragment([
+                'name' => 'Second Shopping List',
+            ]);
+
+        $this->assertDatabaseHas('lists', ['name' => 'First Shopping List']);
+        $this->assertEquals(2, $list->items->count());
+        $this->assertDatabaseHas('lists', ['name' => 'Second Shopping List']);
+        $this->assertEquals(3, Itemable::count());
+    }
+
+    /** @test */
     public function updating_a_shopping_list()
     {
         $list = factory(Liste::class)->create(['name' => 'Test Shopping List']);
@@ -114,6 +142,7 @@ class ListControllerTest extends TestCase
     /**
      * @test
      * @dataProvider nameInputValidation
+     * @dataProvider onlyIncompleteInputValidation
      */
     public function test_store_form_validation($formInput, $formInputValue)
     {
@@ -142,6 +171,13 @@ class ListControllerTest extends TestCase
         return [
             'Name is required' => ['name', ''],
             'Name is no longer than 250 characters' => ['name', Str::random(251)],
+        ];
+    }
+
+    public function onlyIncompleteInputValidation()
+    {
+        return [
+            'Only Incomplete must be a boolean' => ['only_incomplete', 'String'],
         ];
     }
 }
