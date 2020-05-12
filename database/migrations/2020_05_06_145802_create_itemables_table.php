@@ -9,6 +9,7 @@ class CreateItemablesTable extends Migration
     public function up()
     {
         Schema::create('itemables', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('item_id');
             $table->unsignedBigInteger('itemable_id');
             $table->string('itemable_type');

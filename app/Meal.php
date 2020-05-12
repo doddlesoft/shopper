@@ -8,4 +8,9 @@ class Meal extends Model
     {
         return $this->morphToMany(Item::class, 'itemable');
     }
+
+    public function lists()
+    {
+        return $this->belongsToMany(Liste::class, 'list_meal', 'meal_id', 'list_id');
+    }
 }

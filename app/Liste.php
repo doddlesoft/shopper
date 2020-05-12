@@ -10,4 +10,9 @@ class Liste extends Model
     {
         return $this->morphToMany(Item::class, 'itemable');
     }
+
+    public function meals()
+    {
+        return $this->belongsToMany(Meal::class, 'list_meal', 'list_id');
+    }
 }
