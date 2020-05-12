@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Lists\AddMealToList;
 use App\Http\Requests\AddMealToListRequest;
 use App\Http\Resources\MealCollection;
 use App\Liste;
-use App\Lists\Actions\AddMealToList;
 use App\Meal;
 use Illuminate\Http\Response;
 

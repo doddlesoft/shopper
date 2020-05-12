@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Lists\CreateList;
+use App\Actions\Lists\DeleteList;
+use App\Actions\Lists\UpdateList;
 use App\Http\Requests\ListRequest;
 use App\Http\Resources\ListCollection;
 use App\Http\Resources\Liste as ListResource;
 use App\Liste;
-use App\Lists\Actions\CreateList;
-use App\Lists\Actions\DeleteList;
-use App\Lists\Actions\UpdateList;
 use Illuminate\Http\Response;
 
 class ListController

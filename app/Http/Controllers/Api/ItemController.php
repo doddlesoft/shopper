@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Items\CreateItem;
+use App\Actions\Items\DeleteItem;
+use App\Actions\Items\UpdateItem;
 use App\Http\Requests\CreateItemRequest;
 use App\Http\Requests\UpdateItemRequest;
 use App\Http\Resources\Item as ItemResource;
 use App\Http\Resources\ItemCollection;
 use App\Item;
-use App\Items\Actions\CreateItem;
-use App\Items\Actions\DeleteItem;
-use App\Items\Actions\UpdateItem;
 use App\Liste;
 use App\Meal;
 use Illuminate\Http\Response;

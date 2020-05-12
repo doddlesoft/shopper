@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Items\CompleteItem;
 use App\Http\Requests\CompleteItemRequest;
 use App\Item;
-use App\Items\Actions\CompleteItem;
 use App\Liste;
 use Illuminate\Http\Response;
 

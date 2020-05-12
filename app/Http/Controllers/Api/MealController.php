@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Meals\CreateMeal;
+use App\Actions\Meals\DeleteMeal;
+use App\Actions\Meals\UpdateMeal;
 use App\Http\Requests\MealRequest;
 use App\Http\Resources\Meal as MealResource;
 use App\Http\Resources\MealCollection;
 use App\Meal;
-use App\Meals\Actions\CreateMeal;
-use App\Meals\Actions\DeleteMeal;
-use App\Meals\Actions\UpdateMeal;
 use Illuminate\Http\Response;
 
 class MealController
