@@ -8,7 +8,10 @@ class Liste extends Model
 
     public function items()
     {
-        return $this->morphToMany(Item::class, 'itemable');
+        return $this
+            ->morphToMany(Item::class, 'itemable')
+            ->withPivot('completed_at')
+            ->withTimestamps();
     }
 
     public function meals()

@@ -60,7 +60,7 @@ class ListMealControllerTest extends TestCase
         return [
             'Meal ID is required' => ['meal_id', null],
             'Meal ID must be an integer' => ['meal_id', 'String'],
-            'Meal ID exists in the meal table' => ['meal_id', 1],
+            'Meal ID exists in the meals table' => ['meal_id', 1],
         ];
     }
 }

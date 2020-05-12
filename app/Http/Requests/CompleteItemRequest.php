@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AddMealToListRequest extends FormRequest
+class CompleteItemRequest extends FormRequest
 {
     public function authorize()
     {
@@ -14,7 +14,8 @@ class AddMealToListRequest extends FormRequest
     public function rules()
     {
         return [
-            'meal_id' => 'required|integer|exists:meals,id',
+            'item_id' => 'required|integer|exists:items,id',
+            'list_id' => 'required|integer|exists:lists,id',
         ];
     }
 }
