@@ -25,13 +25,11 @@ class ItemController
 
         $query = Item::query()
             ->select(['items.*'])
-            ->when(request()->filled('list_id'), function ($query) {
-                $query->forItemable(request()->query('list_id'), 'lists');
-            })
-            ->when(request()->filled('meal_id'), function ($query) {
-                $query->forItemable(request()->query('meal_id'), 'meals');
-            })
-            ->when($sortColumn === 'meal', function ($query) use ($sortDirection) {
+            ->when(request()->filled('filter'), function ($query) {
+                [$criteria, $value] = explode(':', request()->query('filter'));
+
+                $query->forItemable($value, Str::plural($criteria));
+            })->when($sortColumn === 'meal', function ($query) use ($sortDirection) {
                 $query->orderByMealName($sortDirection);
             }, function ($query) use ($sortColumn, $sortDirection) {
                 $query->orderBy($sortColumn, $sortDirection);

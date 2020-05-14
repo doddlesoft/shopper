@@ -223,7 +223,7 @@ class ItemControllerTest extends TestCase
         $list1 = factory(Liste::class)->states(['with_items'])->create();
         $list2 = factory(Liste::class)->states(['with_items'])->create();
 
-        $response = $this->getJson(route('items.index', ['list_id' => $list1->id]));
+        $response = $this->getJson(route('items.index', ['filter' => 'list:'.$list1->id]));
 
         $response->assertOk();
 
@@ -255,7 +255,7 @@ class ItemControllerTest extends TestCase
         $list->meals()->attach([$item1->id, $item2->id]);
         $list->items()->attach([$item3->id, $item4->id, $item5->id, $item6->id, $item7->id, $item8->id]);
 
-        $response = $this->getJson(route('items.index', ['list_id' => $list->id, 'sort' => 'meal']));
+        $response = $this->getJson(route('items.index', ['filter' => 'list:'.$list->id, 'sort' => 'meal']));
 
         $response
             ->assertOk()
@@ -320,12 +320,7 @@ class ItemControllerTest extends TestCase
         $list->meals()->attach([$item1->id, $item2->id]);
         $list->items()->attach([$item3->id, $item4->id, $item5->id, $item6->id, $item7->id, $item8->id]);
 
-        $response = $this->getJson(
-            route('items.index', [
-                'list_id' => $list->id,
-                'sort' => '-meal',
-            ])
-        );
+        $response = $this->getJson(route('items.index', ['filter' => 'list:'.$list->id, 'sort' => '-meal']));
 
         $response
             ->assertOk()
@@ -377,7 +372,7 @@ class ItemControllerTest extends TestCase
         $meal1 = factory(Meal::class)->states(['with_items'])->create();
         $meal2 = factory(Meal::class)->states(['with_items'])->create();
 
-        $response = $this->getJson(route('items.index', ['meal_id' => $meal1->id]));
+        $response = $this->getJson(route('items.index', ['filter' => 'meal:'.$meal1->id]));
         $response->assertOk();
 
         $meal1->items->each(function ($item) use ($response) {
