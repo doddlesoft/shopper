@@ -13,20 +13,31 @@ use App\Item;
 use App\Liste;
 use App\Meal;
 use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 
 class ItemController
 {
     public function index(): ItemCollection
     {
-        if (request()->filled('list_id')) {
-            return new ItemCollection(Liste::findOrFail(request()->query('list_id'))->items);
-        }
+        $sortColumn = request()->query('sort', 'created_at');
+        $sortDirection = Str::startsWith($sortColumn, '-') ? 'desc' : 'asc';
+        $sortColumn = ltrim($sortColumn, '-');
 
-        if (request()->filled('meal_id')) {
-            return new ItemCollection(Meal::findOrFail(request()->query('meal_id'))->items);
-        }
+        $query = Item::query()
+            ->select(['items.*'])
+            ->when(request()->filled('list_id'), function ($query) {
+                $query->forItemable(request()->query('list_id'), 'lists');
+            })
+            ->when(request()->filled('meal_id'), function ($query) {
+                $query->forItemable(request()->query('meal_id'), 'meals');
+            })
+            ->when($sortColumn === 'meal', function ($query) use ($sortDirection) {
+                $query->orderByMealName($sortDirection);
+            }, function ($query) use ($sortColumn, $sortDirection) {
+                $query->orderBy($sortColumn, $sortDirection);
+            });
 
-        return new ItemCollection(Item::all());
+        return new ItemCollection($query->get());
     }
 
     public function store(CreateItemRequest $request, CreateItem $action): ItemResource

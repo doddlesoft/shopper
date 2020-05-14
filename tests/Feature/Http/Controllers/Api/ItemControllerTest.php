@@ -26,10 +26,202 @@ class ItemControllerTest extends TestCase
     }
 
     /** @test */
+    public function getting_all_items_ordered_by_date_added_asc()
+    {
+        $item1 = factory(Item::class)->create(['created_at' => now()]);
+        $item2 = factory(Item::class)->create(['created_at' => now()->subDay()]);
+
+        $response = $this->getJson(route('items.index', ['sort' => 'created_at']));
+
+        $response
+            ->assertOk()
+            ->assertJson([
+                'data' => [
+                    [
+                        'id' => $item2->id,
+                        'name' => $item2->name,
+                    ],
+                    [
+                        'id' => $item1->id,
+                        'name' => $item1->name,
+                    ],
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function getting_all_items_ordered_by_date_added_desc()
+    {
+        $item1 = factory(Item::class)->create(['created_at' => now()->subDay()]);
+        $item2 = factory(Item::class)->create(['created_at' => now()]);
+
+        $response = $this->getJson(route('items.index', ['sort' => '-created_at']));
+
+        $response
+            ->assertOk()
+            ->assertJson([
+                'data' => [
+                    [
+                        'id' => $item2->id,
+                        'name' => $item2->name,
+                    ],
+                    [
+                        'id' => $item1->id,
+                        'name' => $item1->name,
+                    ],
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function getting_all_items_ordered_by_name_asc()
+    {
+        $item1 = factory(Item::class)->create(['name' => 'Last Item']);
+        $item2 = factory(Item::class)->create(['name' => 'First Item']);
+
+        $response = $this->getJson(route('items.index', ['sort' => 'name']));
+
+        $response
+            ->assertOk()
+            ->assertJson([
+                'data' => [
+                    [
+                        'id' => $item2->id,
+                        'name' => $item2->name,
+                    ],
+                    [
+                        'id' => $item1->id,
+                        'name' => $item1->name,
+                    ],
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function getting_all_items_ordered_by_name_desc()
+    {
+        $item1 = factory(Item::class)->create(['name' => 'First Item']);
+        $item2 = factory(Item::class)->create(['name' => 'Last Item']);
+
+        $response = $this->getJson(route('items.index', ['sort' => '-name']));
+
+        $response
+            ->assertOk()
+            ->assertJson([
+                'data' => [
+                    [
+                        'id' => $item2->id,
+                        'name' => $item2->name,
+                    ],
+                    [
+                        'id' => $item1->id,
+                        'name' => $item1->name,
+                    ],
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function getting_all_items_ordered_by_meal_name_asc()
+    {
+        $item1 = factory(Item::class)->create(['name' => 'Fifth Item']);
+        $item2 = factory(Item::class)->create(['name' => 'Sixth Item']);
+        $meal1 = factory(Meal::class)->create(['name' => 'Last Meal']);
+        $item3 = factory(Item::class)->create(['name' => 'Third Item']);
+        $item4 = factory(Item::class)->create(['name' => 'Fourth Item']);
+        $meal1->items()->attach([$item3->id, $item4->id]);
+        $meal2 = factory(Meal::class)->create(['name' => 'First Meal']);
+        $item5 = factory(Item::class)->create(['name' => 'First Item']);
+        $item6 = factory(Item::class)->create(['name' => 'Second Item']);
+        $meal2->items()->attach([$item5->id, $item6->id]);
+
+        $response = $this->getJson(route('items.index', ['sort' => 'meal']));
+
+        $response
+            ->assertOk()
+            ->assertJson([
+                'data' => [
+                    [
+                        'id' => $item5->id,
+                        'name' => $item5->name,
+                    ],
+                    [
+                        'id' => $item6->id,
+                        'name' => $item6->name,
+                    ],
+                    [
+                        'id' => $item3->id,
+                        'name' => $item3->name,
+                    ],
+                    [
+                        'id' => $item4->id,
+                        'name' => $item4->name,
+                    ],
+                    [
+                        'id' => $item1->id,
+                        'name' => $item1->name,
+                    ],
+                    [
+                        'id' => $item2->id,
+                        'name' => $item2->name,
+                    ],
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function getting_all_items_ordered_by_meal_name_desc()
+    {
+        $item1 = factory(Item::class)->create(['name' => 'Fifth Item']);
+        $item2 = factory(Item::class)->create(['name' => 'Sixth Item']);
+        $meal1 = factory(Meal::class)->create(['name' => 'Last Meal']);
+        $item3 = factory(Item::class)->create(['name' => 'Third Item']);
+        $item4 = factory(Item::class)->create(['name' => 'Fourth Item']);
+        $meal1->items()->attach([$item3->id, $item4->id]);
+        $meal2 = factory(Meal::class)->create(['name' => 'First Meal']);
+        $item5 = factory(Item::class)->create(['name' => 'First Item']);
+        $item6 = factory(Item::class)->create(['name' => 'Second Item']);
+        $meal2->items()->attach([$item5->id, $item6->id]);
+
+        $response = $this->getJson(route('items.index', ['sort' => '-meal']));
+
+        $response
+            ->assertOk()
+            ->assertJson([
+                'data' => [
+                    [
+                        'id' => $item3->id,
+                        'name' => $item3->name,
+                    ],
+                    [
+                        'id' => $item4->id,
+                        'name' => $item4->name,
+                    ],
+                    [
+                        'id' => $item5->id,
+                        'name' => $item5->name,
+                    ],
+                    [
+                        'id' => $item6->id,
+                        'name' => $item6->name,
+                    ],
+                    [
+                        'id' => $item1->id,
+                        'name' => $item1->name,
+                    ],
+                    [
+                        'id' => $item2->id,
+                        'name' => $item2->name,
+                    ],
+                ],
+            ]);
+    }
+
+    /** @test */
     public function getting_all_shopping_list_items()
     {
-        $list1 = factory(Liste::class)->states('with_items')->create();
-        $list2 = factory(Liste::class)->states('with_items')->create();
+        $list1 = factory(Liste::class)->states(['with_items'])->create();
+        $list2 = factory(Liste::class)->states(['with_items'])->create();
 
         $response = $this->getJson(route('items.index', ['list_id' => $list1->id]));
 
@@ -45,10 +237,145 @@ class ItemControllerTest extends TestCase
     }
 
     /** @test */
+    public function getting_all_shopping_list_items_ordered_by_meal_name_asc()
+    {
+        $item1 = factory(Item::class)->create(['name' => 'Missing First Item']);
+        $item2 = factory(Item::class)->create(['name' => 'Missing Second Item']);
+        $item3 = factory(Item::class)->create(['name' => 'Fifth Item']);
+        $item4 = factory(Item::class)->create(['name' => 'Sixth Item']);
+        $meal1 = factory(Meal::class)->create(['name' => 'Last Meal']);
+        $item5 = factory(Item::class)->create(['name' => 'Third Item']);
+        $item6 = factory(Item::class)->create(['name' => 'Fourth Item']);
+        $meal1->items()->attach([$item5->id, $item6->id]);
+        $meal2 = factory(Meal::class)->create(['name' => 'First Meal']);
+        $item7 = factory(Item::class)->create(['name' => 'First Item']);
+        $item8 = factory(Item::class)->create(['name' => 'Second Item']);
+        $meal2->items()->attach([$item7->id, $item8->id]);
+        $list = factory(Liste::class)->create();
+        $list->meals()->attach([$item1->id, $item2->id]);
+        $list->items()->attach([$item3->id, $item4->id, $item5->id, $item6->id, $item7->id, $item8->id]);
+
+        $response = $this->getJson(route('items.index', ['list_id' => $list->id, 'sort' => 'meal']));
+
+        $response
+            ->assertOk()
+            ->assertJson([
+                'data' => [
+                    [
+                        'id' => $item7->id,
+                        'name' => $item7->name,
+                    ],
+                    [
+                        'id' => $item8->id,
+                        'name' => $item8->name,
+                    ],
+                    [
+                        'id' => $item5->id,
+                        'name' => $item5->name,
+                    ],
+                    [
+                        'id' => $item6->id,
+                        'name' => $item6->name,
+                    ],
+                    [
+                        'id' => $item3->id,
+                        'name' => $item3->name,
+                    ],
+                    [
+                        'id' => $item4->id,
+                        'name' => $item4->name,
+                    ],
+                ],
+            ])
+            ->assertJsonMissing([
+                'data' => [
+                    [
+                        'id' => $item1->id,
+                        'name' => $item1->name,
+                    ],
+                    [
+                        'id' => $item2->id,
+                        'name' => $item2->name,
+                    ],
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function getting_all_shopping_list_items_ordered_by_meal_name_desc()
+    {
+        $item1 = factory(Item::class)->create(['name' => 'Missing First Item']);
+        $item2 = factory(Item::class)->create(['name' => 'Missing Second Item']);
+        $item3 = factory(Item::class)->create(['name' => 'Fifth Item']);
+        $item4 = factory(Item::class)->create(['name' => 'Sixth Item']);
+        $meal1 = factory(Meal::class)->create(['name' => 'Last Meal']);
+        $item5 = factory(Item::class)->create(['name' => 'Third Item']);
+        $item6 = factory(Item::class)->create(['name' => 'Fourth Item']);
+        $meal1->items()->attach([$item5->id, $item6->id]);
+        $meal2 = factory(Meal::class)->create(['name' => 'First Meal']);
+        $item7 = factory(Item::class)->create(['name' => 'First Item']);
+        $item8 = factory(Item::class)->create(['name' => 'Second Item']);
+        $meal2->items()->attach([$item7->id, $item8->id]);
+        $list = factory(Liste::class)->create();
+        $list->meals()->attach([$item1->id, $item2->id]);
+        $list->items()->attach([$item3->id, $item4->id, $item5->id, $item6->id, $item7->id, $item8->id]);
+
+        $response = $this->getJson(
+            route('items.index', [
+                'list_id' => $list->id,
+                'sort' => '-meal',
+            ])
+        );
+
+        $response
+            ->assertOk()
+            ->assertJson([
+                'data' => [
+                    [
+                        'id' => $item5->id,
+                        'name' => $item5->name,
+                    ],
+                    [
+                        'id' => $item6->id,
+                        'name' => $item6->name,
+                    ],
+                    [
+                        'id' => $item7->id,
+                        'name' => $item7->name,
+                    ],
+                    [
+                        'id' => $item8->id,
+                        'name' => $item8->name,
+                    ],
+                    [
+                        'id' => $item3->id,
+                        'name' => $item3->name,
+                    ],
+                    [
+                        'id' => $item4->id,
+                        'name' => $item4->name,
+                    ],
+                ],
+            ])
+            ->assertJsonMissing([
+                'data' => [
+                    [
+                        'id' => $item1->id,
+                        'name' => $item1->name,
+                    ],
+                    [
+                        'id' => $item2->id,
+                        'name' => $item2->name,
+                    ],
+                ],
+            ]);
+    }
+
+    /** @test */
     public function getting_all_meal_items()
     {
-        $meal1 = factory(Meal::class)->states('with_items')->create();
-        $meal2 = factory(Meal::class)->states('with_items')->create();
+        $meal1 = factory(Meal::class)->states(['with_items'])->create();
+        $meal2 = factory(Meal::class)->states(['with_items'])->create();
 
         $response = $this->getJson(route('items.index', ['meal_id' => $meal1->id]));
         $response->assertOk();
