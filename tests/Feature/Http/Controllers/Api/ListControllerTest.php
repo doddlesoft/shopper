@@ -23,8 +23,18 @@ class ListControllerTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertJsonFragment(['name' => $list1->name])
-            ->assertJsonFragment(['name' => $list2->name]);
+            ->assertJson([
+                'data' => [
+                    [
+                        'id' => $list1->id,
+                        'name' => $list1->name,
+                    ],
+                    [
+                        'id' => $list2->id,
+                        'name' => $list2->name,
+                    ],
+                ],
+            ]);
     }
 
     /** @test */
@@ -36,8 +46,11 @@ class ListControllerTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertJsonFragment([
-                'name' => 'Test Shopping List',
+            ->assertJson([
+                'data' => [
+                    'id' => $list->id,
+                    'name' => $list->name,
+                ],
             ]);
     }
 
@@ -48,8 +61,8 @@ class ListControllerTest extends TestCase
 
         $response
             ->assertCreated()
-            ->assertJsonFragment([
-                'name' => 'Test Shopping List',
+            ->assertJson([
+                'data' => ['name' => 'Test Shopping List'],
             ]);
 
         $this->assertDatabaseHas('lists', ['name' => 'Test Shopping List']);
@@ -71,8 +84,8 @@ class ListControllerTest extends TestCase
 
         $response
             ->assertCreated()
-            ->assertJsonFragment([
-                'name' => 'Second Shopping List',
+            ->assertJson([
+                'data' => ['name' => 'Second Shopping List'],
             ]);
 
         $this->assertDatabaseHas('lists', ['name' => 'First Shopping List']);
@@ -99,8 +112,8 @@ class ListControllerTest extends TestCase
 
         $response
             ->assertCreated()
-            ->assertJsonFragment([
-                'name' => 'Second Shopping List',
+            ->assertJson([
+                'data' => ['name' => 'Second Shopping List'],
             ]);
 
         $this->assertDatabaseHas('lists', ['name' => 'First Shopping List']);
@@ -118,8 +131,11 @@ class ListControllerTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertJsonFragment([
-                'name' => 'Updated Shopping List',
+            ->assertJson([
+                'data' => [
+                    'id' => $list->id,
+                    'name' => 'Updated Shopping List',
+                ],
             ]);
 
         $this->assertDatabaseMissing('lists', ['name' => 'Test Shopping List']);

@@ -21,8 +21,18 @@ class MealControllerTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertJsonFragment(['name' => $meal1->name])
-            ->assertJsonFragment(['name' => $meal2->name]);
+            ->assertJson([
+                'data' => [
+                    [
+                        'id' => $meal1->id,
+                        'name' => $meal1->name,
+                    ],
+                    [
+                        'id' => $meal2->id,
+                        'name' => $meal2->name,
+                    ],
+                ],
+            ]);
     }
 
     /** @test */
@@ -34,8 +44,11 @@ class MealControllerTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertJsonFragment([
-                'name' => 'Test Meal',
+            ->assertJson([
+                'data' => [
+                    'id' => $meal->id,
+                    'name' => $meal->name,
+                ],
             ]);
     }
 
@@ -46,8 +59,8 @@ class MealControllerTest extends TestCase
 
         $response
             ->assertCreated()
-            ->assertJsonFragment([
-                'name' => 'Test Meal',
+            ->assertJson([
+                'data' => ['name' => 'Test Meal'],
             ]);
 
         $this->assertDatabaseHas('meals', ['name' => 'Test Meal']);
@@ -62,8 +75,11 @@ class MealControllerTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertJsonFragment([
-                'name' => 'Updated Meal',
+            ->assertJson([
+                'data' => [
+                    'id' => $meal->id,
+                    'name' => 'Updated Meal',
+                ],
             ]);
 
         $this->assertDatabaseMissing('meals', ['name' => 'Test Meal']);

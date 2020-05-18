@@ -22,7 +22,14 @@ class ListMealControllerTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertJsonFragment(['name' => $meal->name]);
+            ->assertJson([
+                'data' => [
+                    [
+                        'id' => $meal->id,
+                        'name' => $meal->name,
+                    ],
+                ],
+            ]);
     }
 
     /** @test */

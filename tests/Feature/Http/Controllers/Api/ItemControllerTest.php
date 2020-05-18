@@ -22,7 +22,14 @@ class ItemControllerTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertJsonFragment(['name' => 'Test Item']);
+            ->assertJson([
+                'data' => [
+                    [
+                        'id' => $item->id,
+                        'name' => $item->name,
+                    ],
+                ],
+            ]);
     }
 
     /** @test */
@@ -391,8 +398,8 @@ class ItemControllerTest extends TestCase
 
         $response
             ->assertCreated()
-            ->assertJsonFragment([
-                'name' => 'Test Item',
+            ->assertJson([
+                'data' => ['name' => 'Test Item'],
             ]);
 
         $this->assertDatabaseHas('items', ['name' => 'Test Item']);
@@ -410,8 +417,8 @@ class ItemControllerTest extends TestCase
 
         $response
             ->assertCreated()
-            ->assertJsonFragment([
-                'name' => 'Test Shopping List Item',
+            ->assertJson([
+                'data' => ['name' => 'Test Shopping List Item'],
             ]);
 
         $this->assertDatabaseHas('items', ['name' => 'Test Shopping List Item']);
@@ -430,8 +437,8 @@ class ItemControllerTest extends TestCase
 
         $response
             ->assertCreated()
-            ->assertJsonFragment([
-                'name' => 'Test Meal Item',
+            ->assertJson([
+                'data' => ['name' => 'Test Meal Item'],
             ]);
 
         $this->assertDatabaseHas('items', ['name' => 'Test Meal Item']);
@@ -451,9 +458,11 @@ class ItemControllerTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertJsonFragment([
-                'id' => $item->id,
-                'name' => $item->name,
+            ->assertJson([
+                'data' => [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                ],
             ]);
 
         $this->assertDatabaseHas('items', ['name' => $item->name]);
@@ -473,9 +482,11 @@ class ItemControllerTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertJsonFragment([
-                'id' => $item->id,
-                'name' => $item->name,
+            ->assertJson([
+                'data' => [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                ],
             ]);
 
         $this->assertDatabaseHas('items', ['name' => $item->name]);
@@ -491,8 +502,11 @@ class ItemControllerTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertJsonFragment([
-                'name' => 'Updated Item',
+            ->assertJson([
+                'data' => [
+                    'id' => $item->id,
+                    'name' => 'Updated Item',
+                ],
             ]);
 
         $this->assertDatabaseMissing('items', ['name' => 'Test Item']);
@@ -513,8 +527,11 @@ class ItemControllerTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertJsonFragment([
-                'name' => 'Updated Shopping List Item',
+            ->assertJson([
+                'data' => [
+                    'id' => $item->id,
+                    'name' => 'Updated Shopping List Item',
+                ],
             ]);
 
         $this->assertDatabaseMissing('items', ['name' => 'Test Shopping List Item']);
@@ -536,8 +553,11 @@ class ItemControllerTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertJsonFragment([
-                'name' => 'Updated Meal Item',
+            ->assertJson([
+                'data' => [
+                    'id' => $item->id,
+                    'name' => 'Updated Meal Item',
+                ],
             ]);
 
         $this->assertDatabaseMissing('items', ['name' => 'Test Meal Item']);
