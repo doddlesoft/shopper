@@ -5,6 +5,7 @@ namespace Tests\Feature\Http\Controller\Api;
 use App\Item;
 use App\Itemable;
 use App\Liste;
+use App\Meal;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -50,6 +51,49 @@ class ListControllerTest extends TestCase
                 'data' => [
                     'id' => $list->id,
                     'name' => $list->name,
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function getting_a_shopping_list_inluding_its_items_and_meals()
+    {
+        $item1 = factory(Item::class)->create();
+        $item2 = factory(Item::class)->create();
+        $list = factory(Liste::class)->create();
+        $list->items()->attach([$item1->id, $item2->id]);
+        $meal1 = factory(Meal::class)->create();
+        $meal2 = factory(Meal::class)->create();
+        $list->meals()->attach([$meal1->id, $meal2->id]);
+
+        $response = $this->getJson(route('lists.show', ['list' => $list, 'include' => 'items,meals']));
+
+        $response
+            ->assertOk()
+            ->assertJson([
+                'data' => [
+                    'id' => $list->id,
+                    'name' => $list->name,
+                    'items' => [
+                        [
+                            'id' => $item1->id,
+                            'name' => $item1->name,
+                        ],
+                        [
+                            'id' => $item2->id,
+                            'name' => $item2->name,
+                        ],
+                    ],
+                    'meals' => [
+                        [
+                            'id' => $meal1->id,
+                            'name' => $meal1->name,
+                        ],
+                        [
+                            'id' => $meal2->id,
+                            'name' => $meal2->name,
+                        ],
+                    ],
                 ],
             ]);
     }
