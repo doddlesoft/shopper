@@ -10,9 +10,9 @@ class Meal extends JsonResource
     {
         $includes = explode(',', $request->query('include'));
 
-        return array_merge([
+        return array_merge(parent::toArray($request), [
             'items' => $this->when(in_array('items', $includes), new ItemCollection($this->items)),
             'lists' => $this->when(in_array('lists', $includes), new ListCollection($this->lists)),
-        ], parent::toArray($request));
+        ]);
     }
 }

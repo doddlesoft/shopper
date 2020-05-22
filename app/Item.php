@@ -21,6 +21,11 @@ class Item extends Model
         return $this->hasMany(Itemable::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     /* Scopes */
     public function scopeForItemable(Builder $query, int $itemableId, string $itemableType): Builder
     {

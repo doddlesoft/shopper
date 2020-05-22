@@ -10,9 +10,9 @@ class Liste extends JsonResource
     {
         $includes = explode(',', $request->query('include'));
 
-        return array_merge([
+        return array_merge(parent::toArray($request), [
             'items' => $this->when(in_array('items', $includes), new ItemCollection($this->items)),
             'meals' => $this->when(in_array('meals', $includes), new MealCollection($this->meals)),
-        ], parent::toArray($request));
+        ]);
     }
 }

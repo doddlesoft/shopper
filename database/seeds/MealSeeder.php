@@ -1,12 +1,17 @@
 <?php
 
 use App\Meal;
+use App\User;
 use Illuminate\Database\Seeder;
 
 class MealSeeder extends Seeder
 {
     public function run()
     {
-        factory(Meal::class, 10)->states(['with_items'])->create();
+        User::all()->each(function ($user) {
+            factory(Meal::class, 2)
+                ->states(['with_items'])
+                ->create(['user_id' => $user->id]);
+        });
     }
 }

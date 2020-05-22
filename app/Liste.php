@@ -18,4 +18,9 @@ class Liste extends Model
     {
         return $this->belongsToMany(Meal::class, 'list_meal', 'list_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
