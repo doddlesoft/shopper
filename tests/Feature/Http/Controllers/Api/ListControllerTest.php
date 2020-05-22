@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Http\Controller\Api;
+namespace Tests\Feature\Http\Controllers\Api;
 
 use App\Item;
 use App\Itemable;
