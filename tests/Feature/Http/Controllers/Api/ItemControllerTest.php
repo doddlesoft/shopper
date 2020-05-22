@@ -33,7 +33,46 @@ class ItemControllerTest extends TestCase
     }
 
     /** @test */
-    public function getting_all_items_ordered_by_date_added_asc()
+    public function getting_paginated_items()
+    {
+        $item1 = factory(Item::class)->create(['name' => 'First Item']);
+        $item2 = factory(Item::class)->create(['name' => 'Second Item']);
+        $item3 = factory(Item::class)->create(['name' => 'Third Item']);
+        $item4 = factory(Item::class)->create(['name' => 'Fourth Item']);
+        $item5 = factory(Item::class)->create(['name' => 'Fifth Item']);
+
+        $response = $this->getJson(route('items.index', ['page' => 2, 'per_page' => 2]));
+
+        $response
+            ->assertOk()
+            ->assertJson([
+                'data' => [
+                    [
+                        'id' => $item3->id,
+                        'name' => $item3->name,
+                    ],
+                    [
+                        'id' => $item4->id,
+                        'name' => $item4->name,
+                    ],
+                ],
+            ])
+            ->assertJsonMissing([
+                'id' => $item1->id,
+                'name' => $item1->name,
+            ])
+            ->assertJsonMissing([
+                'id' => $item2->id,
+                'name' => $item2->name,
+            ])
+            ->assertJsonMissing([
+                'id' => $item5->id,
+                'name' => $item5->name,
+            ]);
+    }
+
+    /** @test */
+    public function getting_all_items_ordered_by_date_created_asc()
     {
         $item1 = factory(Item::class)->create(['created_at' => now()]);
         $item2 = factory(Item::class)->create(['created_at' => now()->subDay()]);
@@ -57,7 +96,7 @@ class ItemControllerTest extends TestCase
     }
 
     /** @test */
-    public function getting_all_items_ordered_by_date_added_desc()
+    public function getting_all_items_ordered_by_date_created_desc()
     {
         $item1 = factory(Item::class)->create(['created_at' => now()->subDay()]);
         $item2 = factory(Item::class)->create(['created_at' => now()]);
@@ -295,16 +334,12 @@ class ItemControllerTest extends TestCase
                 ],
             ])
             ->assertJsonMissing([
-                'data' => [
-                    [
-                        'id' => $item1->id,
-                        'name' => $item1->name,
-                    ],
-                    [
-                        'id' => $item2->id,
-                        'name' => $item2->name,
-                    ],
-                ],
+                'id' => $item1->id,
+                'name' => $item1->name,
+            ])
+            ->assertJsonMissing([
+                'id' => $item2->id,
+                'name' => $item2->name,
             ]);
     }
 
@@ -360,16 +395,12 @@ class ItemControllerTest extends TestCase
                 ],
             ])
             ->assertJsonMissing([
-                'data' => [
-                    [
-                        'id' => $item1->id,
-                        'name' => $item1->name,
-                    ],
-                    [
-                        'id' => $item2->id,
-                        'name' => $item2->name,
-                    ],
-                ],
+                'id' => $item1->id,
+                'name' => $item1->name,
+            ])
+            ->assertJsonMissing([
+                'id' => $item2->id,
+                'name' => $item2->name,
             ]);
     }
 

@@ -35,7 +35,11 @@ class ItemController
                 $query->orderBy($sortColumn, $sortDirection);
             });
 
-        return new ItemCollection($query->get());
+        return new ItemCollection(
+            request()->filled('page')
+                ? $query->paginate(request()->query('per_page'))
+                : $query->get()
+        );
     }
 
     public function store(CreateItemRequest $request, CreateItem $action): ItemResource
