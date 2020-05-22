@@ -41,7 +41,7 @@ class ItemControllerTest extends TestCase
         $item4 = factory(Item::class)->create(['name' => 'Fourth Item']);
         $item5 = factory(Item::class)->create(['name' => 'Fifth Item']);
 
-        $response = $this->getJson(route('items.index', ['page' => 2, 'per_page' => 2]));
+        $response = $this->getJson(route('items.index', ['page[number]' => 2, 'page[size]' => 2]));
 
         $response
             ->assertOk()

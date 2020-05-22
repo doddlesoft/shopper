@@ -36,9 +36,14 @@ class ItemController
             });
 
         return new ItemCollection(
-            request()->filled('page')
-                ? $query->paginate(request()->query('per_page'))
-                : $query->get()
+            request()->filled('page') ?
+                $query->paginate(
+                    request()->query('page')['size'],
+                    ['*'],
+                    'page[number]',
+                    request()->query('page')['number'],
+                ) :
+                $query->get()
         );
     }
 
