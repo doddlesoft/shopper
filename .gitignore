@@ -8,6 +8,7 @@ _ide_helper.php
 .env.backup
 .php_cs.cache
 .phpunit.result.cache
+auth.json
 Homestead.json
 Homestead.yaml
 npm-debug.log
