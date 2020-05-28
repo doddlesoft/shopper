@@ -12,7 +12,10 @@ class CreateList
 
     public function perform(string $name): Liste
     {
-        $list = Liste::create(['name' => $name]);
+        $list = Liste::create([
+            'user_id' => auth()->id(),
+            'name' => $name,
+        ]);
 
         if ($this->list !== null) {
             $this->copyItems($list);

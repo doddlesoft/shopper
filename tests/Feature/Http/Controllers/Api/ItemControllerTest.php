@@ -5,8 +5,10 @@ namespace Tests\Feature\Http\Controllers\Api;
 use App\Item;
 use App\Liste;
 use App\Meal;
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class ItemControllerTest extends TestCase
@@ -16,7 +18,10 @@ class ItemControllerTest extends TestCase
     /** @test */
     public function getting_all_items()
     {
-        $item = factory(Item::class)->create(['name' => 'Test Item']);
+        $item1 = factory(Item::class)->create();
+        $item2 = factory(Item::class)->create();
+
+        Sanctum::actingAs($item1->user, ['*']);
 
         $response = $this->getJson(route('items.index'));
 
@@ -25,21 +30,28 @@ class ItemControllerTest extends TestCase
             ->assertJson([
                 'data' => [
                     [
-                        'id' => $item->id,
-                        'name' => $item->name,
+                        'id' => $item1->id,
+                        'name' => $item1->name,
                     ],
                 ],
+            ])
+            ->assertJsonMissing([
+                'id' => $item2->id,
+                'name' => $item2->name,
             ]);
     }
 
     /** @test */
     public function getting_paginated_items()
     {
-        $item1 = factory(Item::class)->create(['name' => 'First Item']);
-        $item2 = factory(Item::class)->create(['name' => 'Second Item']);
-        $item3 = factory(Item::class)->create(['name' => 'Third Item']);
-        $item4 = factory(Item::class)->create(['name' => 'Fourth Item']);
-        $item5 = factory(Item::class)->create(['name' => 'Fifth Item']);
+        $user = factory(User::class)->create();
+        $item1 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item2 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item3 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item4 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item5 = factory(Item::class)->create(['user_id' => $user->id]);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->getJson(route('items.index', ['page[number]' => 2, 'page[size]' => 2]));
 
@@ -74,8 +86,11 @@ class ItemControllerTest extends TestCase
     /** @test */
     public function getting_all_items_ordered_by_date_created_asc()
     {
-        $item1 = factory(Item::class)->create(['created_at' => now()]);
-        $item2 = factory(Item::class)->create(['created_at' => now()->subDay()]);
+        $user = factory(User::class)->create();
+        $item1 = factory(Item::class)->create(['user_id' => $user->id, 'created_at' => now()]);
+        $item2 = factory(Item::class)->create(['user_id' => $user->id, 'created_at' => now()->subDay()]);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->getJson(route('items.index', ['sort' => 'created_at']));
 
@@ -98,8 +113,11 @@ class ItemControllerTest extends TestCase
     /** @test */
     public function getting_all_items_ordered_by_date_created_desc()
     {
-        $item1 = factory(Item::class)->create(['created_at' => now()->subDay()]);
-        $item2 = factory(Item::class)->create(['created_at' => now()]);
+        $user = factory(User::class)->create();
+        $item1 = factory(Item::class)->create(['user_id' => $user->id, 'created_at' => now()->subDay()]);
+        $item2 = factory(Item::class)->create(['user_id' => $user->id, 'created_at' => now()]);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->getJson(route('items.index', ['sort' => '-created_at']));
 
@@ -122,8 +140,11 @@ class ItemControllerTest extends TestCase
     /** @test */
     public function getting_all_items_ordered_by_name_asc()
     {
-        $item1 = factory(Item::class)->create(['name' => 'Last Item']);
-        $item2 = factory(Item::class)->create(['name' => 'First Item']);
+        $user = factory(User::class)->create();
+        $item1 = factory(Item::class)->create(['user_id' => $user->id, 'name' => 'Last Item']);
+        $item2 = factory(Item::class)->create(['user_id' => $user->id, 'name' => 'First Item']);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->getJson(route('items.index', ['sort' => 'name']));
 
@@ -146,8 +167,11 @@ class ItemControllerTest extends TestCase
     /** @test */
     public function getting_all_items_ordered_by_name_desc()
     {
-        $item1 = factory(Item::class)->create(['name' => 'First Item']);
-        $item2 = factory(Item::class)->create(['name' => 'Last Item']);
+        $user = factory(User::class)->create();
+        $item1 = factory(Item::class)->create(['user_id' => $user->id, 'name' => 'First Item']);
+        $item2 = factory(Item::class)->create(['user_id' => $user->id, 'name' => 'Last Item']);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->getJson(route('items.index', ['sort' => '-name']));
 
@@ -170,16 +194,19 @@ class ItemControllerTest extends TestCase
     /** @test */
     public function getting_all_items_ordered_by_meal_name_asc()
     {
-        $item1 = factory(Item::class)->create(['name' => 'Fifth Item']);
-        $item2 = factory(Item::class)->create(['name' => 'Sixth Item']);
-        $meal1 = factory(Meal::class)->create(['name' => 'Last Meal']);
-        $item3 = factory(Item::class)->create(['name' => 'Third Item']);
-        $item4 = factory(Item::class)->create(['name' => 'Fourth Item']);
+        $user = factory(User::class)->create();
+        $item1 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item2 = factory(Item::class)->create(['user_id' => $user->id]);
+        $meal1 = factory(Meal::class)->create(['user_id' => $user->id, 'name' => 'Last Meal']);
+        $item3 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item4 = factory(Item::class)->create(['user_id' => $user->id]);
         $meal1->items()->attach([$item3->id, $item4->id]);
-        $meal2 = factory(Meal::class)->create(['name' => 'First Meal']);
-        $item5 = factory(Item::class)->create(['name' => 'First Item']);
-        $item6 = factory(Item::class)->create(['name' => 'Second Item']);
+        $meal2 = factory(Meal::class)->create(['user_id' => $user->id, 'name' => 'First Meal']);
+        $item5 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item6 = factory(Item::class)->create(['user_id' => $user->id]);
         $meal2->items()->attach([$item5->id, $item6->id]);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->getJson(route('items.index', ['sort' => 'meal']));
 
@@ -218,16 +245,19 @@ class ItemControllerTest extends TestCase
     /** @test */
     public function getting_all_items_ordered_by_meal_name_desc()
     {
-        $item1 = factory(Item::class)->create(['name' => 'Fifth Item']);
-        $item2 = factory(Item::class)->create(['name' => 'Sixth Item']);
-        $meal1 = factory(Meal::class)->create(['name' => 'Last Meal']);
-        $item3 = factory(Item::class)->create(['name' => 'Third Item']);
-        $item4 = factory(Item::class)->create(['name' => 'Fourth Item']);
+        $user = factory(User::class)->create();
+        $item1 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item2 = factory(Item::class)->create(['user_id' => $user->id]);
+        $meal1 = factory(Meal::class)->create(['user_id' => $user->id, 'name' => 'Last Meal']);
+        $item3 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item4 = factory(Item::class)->create(['user_id' => $user->id]);
         $meal1->items()->attach([$item3->id, $item4->id]);
-        $meal2 = factory(Meal::class)->create(['name' => 'First Meal']);
-        $item5 = factory(Item::class)->create(['name' => 'First Item']);
-        $item6 = factory(Item::class)->create(['name' => 'Second Item']);
+        $meal2 = factory(Meal::class)->create(['user_id' => $user->id, 'name' => 'First Meal']);
+        $item5 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item6 = factory(Item::class)->create(['user_id' => $user->id]);
         $meal2->items()->attach([$item5->id, $item6->id]);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->getJson(route('items.index', ['sort' => '-meal']));
 
@@ -269,6 +299,8 @@ class ItemControllerTest extends TestCase
         $list1 = factory(Liste::class)->states(['with_items'])->create();
         $list2 = factory(Liste::class)->states(['with_items'])->create();
 
+        Sanctum::actingAs($list1->user, ['*']);
+
         $response = $this->getJson(route('items.index', ['filter' => 'list:'.$list1->id]));
 
         $response->assertOk();
@@ -285,21 +317,24 @@ class ItemControllerTest extends TestCase
     /** @test */
     public function getting_all_shopping_list_items_ordered_by_meal_name_asc()
     {
-        $item1 = factory(Item::class)->create(['name' => 'Missing First Item']);
-        $item2 = factory(Item::class)->create(['name' => 'Missing Second Item']);
-        $item3 = factory(Item::class)->create(['name' => 'Fifth Item']);
-        $item4 = factory(Item::class)->create(['name' => 'Sixth Item']);
-        $meal1 = factory(Meal::class)->create(['name' => 'Last Meal']);
-        $item5 = factory(Item::class)->create(['name' => 'Third Item']);
-        $item6 = factory(Item::class)->create(['name' => 'Fourth Item']);
+        $user = factory(User::class)->create();
+        $item1 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item2 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item3 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item4 = factory(Item::class)->create(['user_id' => $user->id]);
+        $meal1 = factory(Meal::class)->create(['user_id' => $user->id, 'name' => 'Last Meal']);
+        $item5 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item6 = factory(Item::class)->create(['user_id' => $user->id]);
         $meal1->items()->attach([$item5->id, $item6->id]);
-        $meal2 = factory(Meal::class)->create(['name' => 'First Meal']);
-        $item7 = factory(Item::class)->create(['name' => 'First Item']);
-        $item8 = factory(Item::class)->create(['name' => 'Second Item']);
+        $meal2 = factory(Meal::class)->create(['user_id' => $user->id, 'name' => 'First Meal']);
+        $item7 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item8 = factory(Item::class)->create(['user_id' => $user->id]);
         $meal2->items()->attach([$item7->id, $item8->id]);
-        $list = factory(Liste::class)->create();
+        $list = factory(Liste::class)->create(['user_id' => $user->id]);
         $list->meals()->attach([$item1->id, $item2->id]);
         $list->items()->attach([$item3->id, $item4->id, $item5->id, $item6->id, $item7->id, $item8->id]);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->getJson(route('items.index', ['filter' => 'list:'.$list->id, 'sort' => 'meal']));
 
@@ -346,21 +381,24 @@ class ItemControllerTest extends TestCase
     /** @test */
     public function getting_all_shopping_list_items_ordered_by_meal_name_desc()
     {
-        $item1 = factory(Item::class)->create(['name' => 'Missing First Item']);
-        $item2 = factory(Item::class)->create(['name' => 'Missing Second Item']);
-        $item3 = factory(Item::class)->create(['name' => 'Fifth Item']);
-        $item4 = factory(Item::class)->create(['name' => 'Sixth Item']);
-        $meal1 = factory(Meal::class)->create(['name' => 'Last Meal']);
-        $item5 = factory(Item::class)->create(['name' => 'Third Item']);
-        $item6 = factory(Item::class)->create(['name' => 'Fourth Item']);
+        $user = factory(User::class)->create();
+        $item1 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item2 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item3 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item4 = factory(Item::class)->create(['user_id' => $user->id]);
+        $meal1 = factory(Meal::class)->create(['user_id' => $user->id, 'name' => 'Last Meal']);
+        $item5 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item6 = factory(Item::class)->create(['user_id' => $user->id]);
         $meal1->items()->attach([$item5->id, $item6->id]);
-        $meal2 = factory(Meal::class)->create(['name' => 'First Meal']);
-        $item7 = factory(Item::class)->create(['name' => 'First Item']);
-        $item8 = factory(Item::class)->create(['name' => 'Second Item']);
+        $meal2 = factory(Meal::class)->create(['user_id' => $user->id, 'name' => 'First Meal']);
+        $item7 = factory(Item::class)->create(['user_id' => $user->id]);
+        $item8 = factory(Item::class)->create(['user_id' => $user->id]);
         $meal2->items()->attach([$item7->id, $item8->id]);
-        $list = factory(Liste::class)->create();
+        $list = factory(Liste::class)->create(['user_id' => $user->id]);
         $list->meals()->attach([$item1->id, $item2->id]);
         $list->items()->attach([$item3->id, $item4->id, $item5->id, $item6->id, $item7->id, $item8->id]);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->getJson(route('items.index', ['filter' => 'list:'.$list->id, 'sort' => '-meal']));
 
@@ -405,12 +443,28 @@ class ItemControllerTest extends TestCase
     }
 
     /** @test */
+    public function getting_all_shopping_list_items_for_a_list_that_isnt_the_logged_in_users_returns_a_403()
+    {
+        $list1 = factory(Liste::class)->states(['with_items'])->create();
+        $list2 = factory(Liste::class)->states(['with_items'])->create();
+
+        Sanctum::actingAs($list1->user, ['*']);
+
+        $response = $this->getJson(route('items.index', ['filter' => 'list:'.$list2->id]));
+
+        $response->assertStatus(403);
+    }
+
+    /** @test */
     public function getting_all_meal_items()
     {
         $meal1 = factory(Meal::class)->states(['with_items'])->create();
         $meal2 = factory(Meal::class)->states(['with_items'])->create();
 
+        Sanctum::actingAs($meal1->user, ['*']);
+
         $response = $this->getJson(route('items.index', ['filter' => 'meal:'.$meal1->id]));
+
         $response->assertOk();
 
         $meal1->items->each(function ($item) use ($response) {
@@ -423,23 +477,50 @@ class ItemControllerTest extends TestCase
     }
 
     /** @test */
+    public function getting_all_meal_items_for_a_meal_that_isnt_the_logged_in_users_returns_a_403()
+    {
+        $meal1 = factory(Meal::class)->states(['with_items'])->create();
+        $meal2 = factory(Meal::class)->states(['with_items'])->create();
+
+        Sanctum::actingAs($meal1->user, ['*']);
+
+        $response = $this->getJson(route('items.index', ['filter' => 'meal:'.$meal2->id]));
+
+        $response->assertStatus(403);
+    }
+
+    /** @test */
     public function creating_a_new_item()
     {
+        Sanctum::actingAs(
+            $user = factory(User::class)->create(),
+            ['*'],
+        );
+
         $response = $this->postJson(route('items.store'), ['name' => 'Test Item']);
 
         $response
             ->assertCreated()
             ->assertJson([
-                'data' => ['name' => 'Test Item'],
+                'data' => [
+                    'user_id' => $user->id,
+                    'name' => 'Test Item',
+                ],
             ]);
 
-        $this->assertDatabaseHas('items', ['name' => 'Test Item']);
+        $this->assertDatabaseHas('items', [
+            'user_id' => $user->id,
+            'name' => 'Test Item',
+        ]);
     }
 
     /** @test */
     public function creating_a_new_shopping_list_item()
     {
-        $list = factory(Liste::class)->create();
+        $user = factory(User::class)->create();
+        $list = factory(Liste::class)->create(['user_id' => $user->id]);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->postJson(route('items.store'), [
             'name' => 'Test Shopping List Item',
@@ -449,17 +530,46 @@ class ItemControllerTest extends TestCase
         $response
             ->assertCreated()
             ->assertJson([
-                'data' => ['name' => 'Test Shopping List Item'],
+                'data' => [
+                    'user_id' => $user->id,
+                    'name' => 'Test Shopping List Item',
+                ],
             ]);
 
-        $this->assertDatabaseHas('items', ['name' => 'Test Shopping List Item']);
+        $this->assertDatabaseHas('items', [
+            'user_id' => $user->id,
+            'name' => 'Test Shopping List Item',
+        ]);
         $this->assertEquals(1, $list->items->count());
+    }
+
+    /** @test */
+    public function creating_a_new_shopping_list_item_for_a_list_that_isnt_the_logged_in_users_returns_a_403()
+    {
+        $user1 = factory(User::class)->create();
+        $list1 = factory(Liste::class)->create(['user_id' => $user1->id]);
+        $user2 = factory(User::class)->create();
+        $list2 = factory(Liste::class)->create(['user_id' => $user2->id]);
+
+        Sanctum::actingAs($user1, ['*']);
+
+        $response = $this->postJson(route('items.store'), [
+            'name' => 'Test Shopping List Item',
+            'list_id' => $list2->id,
+        ]);
+
+        $response->assertStatus(403);
+
+        $this->assertEquals(0, Item::count());
     }
 
     /** @test */
     public function creating_a_new_meal_item()
     {
-        $meal = factory(Meal::class)->create();
+        $user = factory(User::class)->create();
+        $meal = factory(Meal::class)->create(['user_id' => $user->id]);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->postJson(route('items.store'), [
             'name' => 'Test Meal Item',
@@ -477,10 +587,33 @@ class ItemControllerTest extends TestCase
     }
 
     /** @test */
+    public function creating_a_new_meal_item_that_isnt_the_logged_in_users_returns_a_403()
+    {
+        $user1 = factory(User::class)->create();
+        $meal1 = factory(Meal::class)->create(['user_id' => $user1->id]);
+        $user2 = factory(User::class)->create();
+        $meal2 = factory(Meal::class)->create(['user_id' => $user2->id]);
+
+        Sanctum::actingAs($user1, ['*']);
+
+        $response = $this->postJson(route('items.store'), [
+            'name' => 'Test Meal Item',
+            'meal_id' => $meal2->id,
+        ]);
+
+        $response->assertStatus(403);
+
+        $this->assertEquals(0, Item::count());
+    }
+
+    /** @test */
     public function adding_an_existing_item_to_a_shopping_list()
     {
         $item = factory(Item::class)->create();
-        $list = factory(Liste::class)->create();
+        $user = factory(User::class)->create();
+        $list = factory(Liste::class)->create(['user_id' => $user->id]);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->postJson(route('items.store'), [
             'item_id' => $item->id,
@@ -501,10 +634,34 @@ class ItemControllerTest extends TestCase
     }
 
     /** @test */
+    public function adding_an_existing_item_to_a_shopping_list_that_isnt_the_logged_in_users_returns_a_403()
+    {
+        $item = factory(Item::class)->create();
+        $user1 = factory(User::class)->create();
+        $list1 = factory(Liste::class)->create(['user_id' => $user1->id]);
+        $user2 = factory(User::class)->create();
+        $list2 = factory(Liste::class)->create(['user_id' => $user2->id]);
+
+        Sanctum::actingAs($user1, ['*']);
+
+        $response = $this->postJson(route('items.store'), [
+            'item_id' => $item->id,
+            'list_id' => $list2->id,
+        ]);
+
+        $response->assertStatus(403);
+
+        $this->assertEquals(0, $list2->items->count());
+    }
+
+    /** @test */
     public function adding_an_existing_item_to_a_meal()
     {
         $item = factory(Item::class)->create();
-        $meal = factory(Meal::class)->create();
+        $user = factory(User::class)->create();
+        $meal = factory(Meal::class)->create(['user_id' => $user->id]);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->postJson(route('items.store'), [
             'item_id' => $item->id,
@@ -525,9 +682,36 @@ class ItemControllerTest extends TestCase
     }
 
     /** @test */
+    public function adding_an_existing_item_to_a_meal_that_isnt_the_logged_in_users_returns_a_403()
+    {
+        $item = factory(Item::class)->create();
+        $user1 = factory(User::class)->create();
+        $meal1 = factory(Meal::class)->create(['user_id' => $user1->id]);
+        $user2 = factory(User::class)->create();
+        $meal2 = factory(Meal::class)->create(['user_id' => $user2->id]);
+
+        Sanctum::actingAs($user1, ['*']);
+
+        $response = $this->postJson(route('items.store'), [
+            'item_id' => $item->id,
+            'meal_id' => $meal2->id,
+        ]);
+
+        $response->assertStatus(403);
+
+        $this->assertEquals(0, $meal2->items->count());
+    }
+
+    /** @test */
     public function updating_an_item()
     {
-        $item = factory(Item::class)->create(['name' => 'Test Item']);
+        $user = factory(User::class)->create();
+        $item = factory(Item::class)->create([
+            'user_id' => $user->id,
+            'name' => 'Test Item',
+        ]);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->patchJson(route('items.update', $item), ['name' => 'Updated Item']);
 
@@ -545,11 +729,37 @@ class ItemControllerTest extends TestCase
     }
 
     /** @test */
+    public function updating_an_item_that_isnt_the_logged_in_users_returns_a_403()
+    {
+        $user1 = factory(User::class)->create();
+        $user2 = factory(User::class)->create();
+        $item = factory(Item::class)->create([
+            'user_id' => $user1->id,
+            'name' => 'Test Item',
+        ]);
+
+        Sanctum::actingAs($user2, ['*']);
+
+        $response = $this->patchJson(route('items.update', $item), ['name' => 'Updated Item']);
+
+        $response->assertStatus(403);
+
+        $this->assertDatabaseHas('items', ['name' => 'Test Item']);
+        $this->assertDatabaseMissing('items', ['name' => 'Updated Item']);
+    }
+
+    /** @test */
     public function updating_a_shopping_list_item()
     {
-        $item = factory(Item::class)->create(['name' => 'Test Shopping List Item']);
-        $list = factory(Liste::class)->create();
+        $user = factory(User::class)->create();
+        $item = factory(Item::class)->create([
+            'user_id' => $user->id,
+            'name' => 'Test Shopping List Item',
+        ]);
+        $list = factory(Liste::class)->create(['user_id' => $user->id]);
         $list->items()->attach($item);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->patchJson(route('items.update', $item), [
             'name' => 'Updated Shopping List Item',
@@ -573,9 +783,15 @@ class ItemControllerTest extends TestCase
     /** @test */
     public function updating_a_meal_item()
     {
-        $item = factory(Item::class)->create(['name' => 'Test Meal Item']);
-        $meal = factory(Meal::class)->create();
+        $user = factory(User::class)->create();
+        $item = factory(Item::class)->create([
+            'user_id' => $user->id,
+            'name' => 'Test Meal Item',
+        ]);
+        $meal = factory(Meal::class)->create(['user_id' => $user->id]);
         $meal->items()->attach($item);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->patchJson(route('items.update', $item), [
             'name' => 'Updated Meal Item',
@@ -599,7 +815,13 @@ class ItemControllerTest extends TestCase
     /** @test */
     public function deleting_an_item()
     {
-        $item = factory(Item::class)->create(['name' => 'Test Item']);
+        $user = factory(User::class)->create();
+        $item = factory(Item::class)->create([
+            'user_id' => $user->id,
+            'name' => 'Test Item',
+        ]);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->deleteJson(route('items.destroy', $item));
 
@@ -610,11 +832,37 @@ class ItemControllerTest extends TestCase
     }
 
     /** @test */
+    public function deleting_an_item_that_isnt_the_logged_in_users_returns_a_403()
+    {
+        $user1 = factory(User::class)->create();
+        $user2 = factory(User::class)->create();
+        $item = factory(Item::class)->create([
+            'user_id' => $user1->id,
+            'name' => 'Test Item',
+        ]);
+
+        Sanctum::actingAs($user2, ['*']);
+
+        $response = $this->deleteJson(route('items.destroy', $item));
+
+        $response->assertStatus(403);
+
+        $this->assertDatabaseHas('items', ['name' => 'Test Item']);
+        $this->assertEquals(1, Item::count());
+    }
+
+    /** @test */
     public function deleting_a_shopping_list_item()
     {
-        $item = factory(Item::class)->create(['name' => 'Test Shopping List Item']);
-        $list = factory(Liste::class)->create();
+        $user = factory(User::class)->create();
+        $item = factory(Item::class)->create([
+            'user_id' => $user->id,
+            'name' => 'Test Shopping List Item',
+        ]);
+        $list = factory(Liste::class)->create(['user_id' => $user->id]);
         $list->items()->attach($item);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->deleteJson(route('items.destroy', $item), ['list_id' => $list->id]);
 
@@ -628,9 +876,15 @@ class ItemControllerTest extends TestCase
     /** @test */
     public function deleting_a_meal_item()
     {
-        $item = factory(Item::class)->create(['name' => 'Test Meal Item']);
-        $meal = factory(Meal::class)->create();
+        $user = factory(User::class)->create();
+        $item = factory(Item::class)->create([
+            'user_id' => $user->id,
+            'name' => 'Test Meal Item',
+        ]);
+        $meal = factory(Meal::class)->create(['user_id' => $user->id]);
         $meal->items()->attach($item);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->deleteJson(route('items.destroy', $item), ['meal_id' => $meal->id]);
 
@@ -648,6 +902,8 @@ class ItemControllerTest extends TestCase
      */
     public function test_store_form_validation($formInput, $formInputValue)
     {
+        Sanctum::actingAs(factory(User::class)->create(), ['*']);
+
         $response = $this->postJson(route('items.store'), [$formInput => $formInputValue]);
 
         $response->assertStatus(422);
@@ -660,7 +916,10 @@ class ItemControllerTest extends TestCase
      */
     public function test_update_form_validation($formInput, $formInputValue)
     {
-        $item = factory(Item::class)->create();
+        $user = factory(User::class)->create();
+        $item = factory(Item::class)->create(['user_id' => $user->id]);
+
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->patchJson(route('items.update', $item), [$formInput => $formInputValue]);
 

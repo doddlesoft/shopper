@@ -8,6 +8,9 @@ class CreateMeal
 {
     public function perform(string $name): Meal
     {
-        return Meal::create(['name' => $name]);
+        return Meal::create([
+            'user_id' => auth()->id(),
+            'name' => $name,
+        ]);
     }
 }

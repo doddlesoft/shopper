@@ -13,7 +13,10 @@ class CreateItem
 
     public function perform(): Item
     {
-        $item = $this->item ?? Item::firstOrCreate(['name' => $this->name]);
+        $item = $this->item ?? Item::firstOrCreate([
+            'user_id' => auth()->id(),
+            'name' => $this->name,
+        ]);
 
         if ($this->itemable !== null) {
             $this->itemable->items()->attach($item);

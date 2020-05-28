@@ -23,7 +23,9 @@ class ItemController
         $sortDirection = Str::startsWith($sortColumn, '-') ? 'desc' : 'asc';
         $sortColumn = ltrim($sortColumn, '-');
 
-        $query = Item::query()
+        $query = auth()
+            ->user()
+            ->items()
             ->select(['items.*'])
             ->when(request()->filled('filter'), function ($query) {
                 [$criteria, $value] = explode(':', request()->query('filter'));

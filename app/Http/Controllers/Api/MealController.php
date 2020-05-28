@@ -15,7 +15,7 @@ class MealController
 {
     public function index(): MealCollection
     {
-        return new MealCollection(Meal::all());
+        return new MealCollection(auth()->user()->meals);
     }
 
     public function store(MealRequest $request, CreateMeal $action): MealResource
