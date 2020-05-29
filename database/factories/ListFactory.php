@@ -2,6 +2,7 @@
 
 use App\Item;
 use App\Liste;
+use App\Meal;
 use App\User;
 use Faker\Generator as Faker;
 
@@ -19,4 +20,12 @@ $factory->afterCreatingState(Liste::class, 'with_items', function ($list) {
         factory(Item::class)->create(['user_id' => $list->user_id]),
         factory(Item::class)->create(['user_id' => $list->user_id]),
     ]);
+});
+
+$factory->afterCreatingState(Liste::class, 'with_meals', function ($list) {
+    $meal1 = factory(Meal::class)->states(['with_items'])->create(['user_id' => $list->user_id]);
+    $meal2 = factory(Meal::class)->states(['with_items'])->create(['user_id' => $list->user_id]);
+
+    $list->meals()->attach([$meal1->id, $meal2->id]);
+    $list->items()->saveMany($meal1->items->merge($meal2->items));
 });

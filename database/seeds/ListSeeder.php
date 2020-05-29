@@ -10,7 +10,7 @@ class ListSeeder extends Seeder
     {
         User::all()->each(function ($user) {
             factory(Liste::class, 2)
-                ->states(['with_items'])
+                ->states(['with_items', 'with_meals'])
                 ->create(['user_id' => $user->id]);
         });
     }
