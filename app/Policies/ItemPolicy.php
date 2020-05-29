@@ -54,16 +54,16 @@ class ItemPolicy
 
     public function complete(User $user)
     {
-        $item =  Item::find(request()->input('item_id'));
-        $list =  Liste::find(request()->input('list_id'));
+        $item = Item::find(request()->input('item_id'));
+        $list = Liste::find(request()->input('list_id'));
 
         return $user->id === (int) $item->user_id &&
             $list->items->contains($item);
     }
 
     public function incomplete(User $user, Item $item)
-    {;
-        $list =  Liste::find(request()->input('list_id'));
+    {
+        $list = Liste::find(request()->input('list_id'));
 
         return $user->id === (int) $item->user_id &&
             $list->items->contains($item);
