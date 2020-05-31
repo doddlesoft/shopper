@@ -39,6 +39,7 @@ jobs:
         run: ./vendor/bin/phpunit
         env:
           DB_PORT: ${{ job.services.mysql.ports[3306] }}
+          DB_USERNAME: root
 
       - name: Upload artifacts
         uses: actions/upload-artifact@master
