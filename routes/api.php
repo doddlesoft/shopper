@@ -10,6 +10,7 @@ Route::namespace('Api')->group(function () {
         Route::patch('items/{item}', 'ItemController@update')->middleware('can:update,item')->name('items.update');
         Route::delete('items/{item}', 'ItemController@destroy')->middleware('can:delete,item')->name('items.destroy');
         Route::post('completed-items', 'CompletedItemController@store')->name('completed-items.store');
+        Route::delete('completed-items/{item}', 'CompletedItemController@destroy')->name('completed-items.destroy');
 
         // Lists
         Route::get('lists', 'ListController@index')->name('lists.index');

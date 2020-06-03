@@ -34,6 +34,23 @@ class CompletedItemControllerTest extends TestCase
     }
 
     /** @test */
+    public function completing_an_item_not_on_the_given_list_returns_403()
+    {
+        $user = factory(User::class)->create();
+        $item = factory(Item::class)->create(['user_id' => $user->id]);
+        $list = factory(Liste::class)->create(['user_id' => $user->id]);
+
+        Sanctum::actingAs($user, ['*']);
+
+        $response = $this->postJson(route('completed-items.store'), [
+            'item_id' => $item->id,
+            'list_id' => $list->id,
+        ]);
+
+        $response->assertStatus(403);
+    }
+
+    /** @test */
     public function completing_an_item_that_isnt_the_logged_in_users_returns_a_403()
     {
         $user1 = factory(User::class)->create();
@@ -54,6 +71,55 @@ class CompletedItemControllerTest extends TestCase
         $this->assertNull($list->items->where('id', $item->id)->first()->pivot->completed_at);
     }
 
+    /** @test */
+    public function incompleting_an_item()
+    {
+        $user = factory(User::class)->create();
+        $item = factory(Item::class)->create(['user_id' => $user->id]);
+        $list = factory(Liste::class)->create(['user_id' => $user->id]);
+        $list->items()->attach($item, ['completed_at' => now()]);
+
+        Sanctum::actingAs($user, ['*']);
+
+        $response = $this->deleteJson(route('completed-items.destroy', $item), ['list_id' => $list->id]);
+
+        $response->assertStatus(204);
+
+        $this->assertNull($list->items->where('id', $item->id)->first()->pivot->completed_at);
+    }
+
+    /** @test */
+    public function incompleting_an_item_not_on_the_given_list_returns_403()
+    {
+        $user = factory(User::class)->create();
+        $item = factory(Item::class)->create(['user_id' => $user->id]);
+        $list = factory(Liste::class)->create(['user_id' => $user->id]);
+
+        Sanctum::actingAs($user, ['*']);
+
+        $response = $this->deleteJson(route('completed-items.destroy', $item), ['list_id' => $list->id]);
+
+        $response->assertStatus(403);
+    }
+
+    /** @test */
+    public function incompleting_an_item_that_isnt_the_logged_in_users_returns_a_403()
+    {
+        $user1 = factory(User::class)->create();
+        $user2 = factory(User::class)->create();
+        $item = factory(Item::class)->create(['user_id' => $user1->id]);
+        $list = factory(Liste::class)->create(['user_id' => $user1->id]);
+        $list->items()->attach($item, ['completed_at' => now()]);
+
+        Sanctum::actingAs($user2, ['*']);
+
+        $response = $this->deleteJson(route('completed-items.destroy', $item), ['list_id' => $list->id]);
+
+        $response->assertStatus(403);
+
+        $this->assertNotNull($list->items->where('id', $item->id)->first()->pivot->completed_at);
+    }
+
     /**
      * @test
      * @dataProvider itemIdInputValidation
@@ -64,6 +130,23 @@ class CompletedItemControllerTest extends TestCase
         Sanctum::actingAs(factory(User::class)->create(), ['*']);
 
         $response = $this->postJson(route('completed-items.store'), [$formInput => $formInputValue]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors($formInput);
+    }
+
+    /**
+     * @test
+     * @dataProvider listIdInputValidation
+     */
+    public function test_delete_validation($formInput, $formInputValue)
+    {
+        $user = factory(User::class)->create();
+        $item = factory(Item::class)->create(['user_id' => $user->id]);
+
+        Sanctum::actingAs($user, ['*']);
+
+        $response = $this->deleteJson(route('completed-items.destroy', $item), [$formInput => $formInputValue]);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors($formInput);

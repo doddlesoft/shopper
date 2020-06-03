@@ -9,6 +9,16 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: shopper_test
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -27,6 +37,8 @@ jobs:
 
       - name: Run tests
         run: ./vendor/bin/phpunit
+        env:
+          DB_PORT: ${{ job.services.mysql.ports[3306] }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@master

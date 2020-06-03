@@ -43,12 +43,12 @@ class Item extends Model
             ->leftJoin('itemables', function ($join) {
                 $join
                     ->on('itemables.item_id', 'items.id')
-                    ->on('itemables.itemable_type', 'meals');
+                    ->where('itemables.itemable_type', 'meals');
             })
             ->leftJoin('meals', function ($join) {
                 $join
                     ->on('meals.id', 'itemables.itemable_id')
-                    ->on('itemables.itemable_type', 'meals');
+                    ->where('itemables.itemable_type', 'meals');
             })
             ->orderByRaw("meal_name is null, meal_name {$direction}");
     }
