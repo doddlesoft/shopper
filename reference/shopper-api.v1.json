@@ -1,0 +1,366 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Shopper API",
+    "version": "1.0",
+    "description": "",
+    "contact": {
+      "name": "Sam Bindoff",
+      "email": "sam@shopper.test",
+      "url": "http://shopper.test/contact"
+    },
+    "termsOfService": "http://shopper.test/terms"
+  },
+  "servers": [
+    {
+      "url": "http://shopper.test/api"
+    }
+  ],
+  "paths": {
+    "/items": {
+      "get": {
+        "summary": "GET endpoint",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {}
+          }
+        },
+        "operationId": "get-items",
+        "description": "Get all items",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer"
+            },
+            "in": "query",
+            "name": "page[number]",
+            "description": ""
+          },
+          {
+            "schema": {
+              "type": "integer"
+            },
+            "in": "query",
+            "name": "page[size]"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "filter",
+            "description": ""
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "sort"
+          }
+        ]
+      },
+      "post": {
+        "summary": "POST endpoint",
+        "operationId": "post-items",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Create a new Item"
+      },
+      "patch": {
+        "summary": "PATCH endpoint",
+        "operationId": "patch-items",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "summary": "DELETE endpoint",
+        "operationId": "delete-items",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Item": {
+        "title": "Item",
+        "type": "object",
+        "description": "This object represents an Item owned by a User",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The unique identifier of the Item"
+          },
+          "user_id": {
+            "type": "integer",
+            "description": "The User the Item belongs to"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the Item"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp the Item was created"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "The timestamp the Item was last updated",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "name"
+        ],
+        "x-examples": {
+          "basic-example": {
+            "id": 1,
+            "user_id": 1,
+            "name": "Basic Item",
+            "created_at": "2020-06-01T12:00:00.000000Z",
+            "updated_at": "2020-06-01T12:00:00.000000Z"
+          }
+        }
+      },
+      "Liste": {
+        "title": "Liste",
+        "type": "object",
+        "description": "This object represents a List owned by a User",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The unique identifier of the List"
+          },
+          "user_id": {
+            "type": "integer",
+            "description": "The User the List belongs to"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the List"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp the List was created"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "The timestamp the List was last updated",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "name"
+        ],
+        "x-examples": {
+          "basic-example": {
+            "id": 1,
+            "user_id": 1,
+            "name": "Basic List",
+            "created_at": "2020-06-01T12:00:00.000000Z",
+            "updated_at": "2020-06-01T12:00:00.000000Z"
+          }
+        }
+      },
+      "Meal": {
+        "title": "Meal",
+        "type": "object",
+        "description": "This object represents a Meal owned by a User",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The unique identifier of the Meal"
+          },
+          "user_id": {
+            "type": "integer",
+            "description": "The User the Meal belongs to"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the Meal"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "The timestamp the Meal was created",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "The timestamp the Meal was last updated",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "name"
+        ],
+        "x-examples": {
+          "basic-example": {
+            "id": 1,
+            "user_id": 1,
+            "name": "Basic Meal",
+            "created_at": "2020-06-01T12:00:00.000000Z",
+            "updated_at": "2020-06-01T12:00:00.000000Z"
+          }
+        }
+      },
+      "User": {
+        "title": "User",
+        "type": "object",
+        "description": "This object represents a User",
+        "x-examples": {
+          "basic-example": {
+            "id": 1,
+            "name": "Miss Basic User",
+            "email": "basic@user.com",
+            "email_verified_at": "2020-06-01T12:00:00.000000Z",
+            "password": "supersercrethashedpassword",
+            "remember_token": "randomtoken",
+            "created_at": "2020-06-01T12:00:00.000000Z",
+            "updated_at": "2020-06-01T12:00:00.000000Z"
+          }
+        },
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The unique identifier of the User"
+          },
+          "name": {
+            "type": "string",
+            "description": "The full name of the User"
+          },
+          "email": {
+            "type": "string",
+            "description": "The email address of the User"
+          },
+          "email_verified_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp the User verified their email address"
+          },
+          "password": {
+            "type": "string",
+            "description": "The hashed password of the User"
+          },
+          "remember_token": {
+            "type": "string",
+            "description": "The random unique remember token of the User"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "The timestamp the User was created",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "The timestamp the User was last updated",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "password"
+        ]
+      },
+      "PersonalAccessToken": {
+        "title": "PersonalAccessToken",
+        "type": "object",
+        "description": "This object represents a token owned by a tokenable (User) that is used to authenticate",
+        "x-examples": {
+          "basic-example": {
+            "id": 1,
+            "tokenable_type": "App\\User",
+            "tokenable_id": 1,
+            "name": "Basic User Token",
+            "token": "supersercrethashedrandomtoken",
+            "abilities": "[\"*\"]",
+            "last_used_at": "2020-06-01T12:00:00.000000Z",
+            "created_at": "2020-06-01T12:00:00.000000Z",
+            "updated_at": "2020-06-01T12:00:00.000000Z"
+          }
+        },
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The unique identifier of the Token"
+          },
+          "tokenable_type": {
+            "type": "string",
+            "description": "The tokenable type (Model) the Token belongs to"
+          },
+          "tokenable_id": {
+            "type": "integer",
+            "description": "The tokenable id (Resource ID) the Token belongs to"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the Token"
+          },
+          "token": {
+            "type": "string",
+            "description": "The random hashed unique token that represents the Token"
+          },
+          "abilities": {
+            "type": "string",
+            "description": "The abilities the tokenable has using this Token"
+          },
+          "last_used_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp the Token was last used"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp the Token was created"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "The timestamp the Token was last updated",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "tokenable_type",
+          "tokenable_id",
+          "name",
+          "token"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": ""
+      }
+    }
+  },
+  "security": [
+    {
+      "Authorization": []
+    }
+  ]
+}
