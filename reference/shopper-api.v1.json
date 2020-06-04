@@ -19,7 +19,7 @@
   "paths": {
     "/items": {
       "get": {
-        "summary": "GET endpoint",
+        "summary": "Get Items",
         "tags": [],
         "responses": {
           "200": {
@@ -28,7 +28,7 @@
           }
         },
         "operationId": "get-items",
-        "description": "Get all items",
+        "description": "Get a collection of Items.",
         "parameters": [
           {
             "schema": {
@@ -36,57 +36,758 @@
             },
             "in": "query",
             "name": "page[number]",
-            "description": ""
+            "description": "The page number for the results."
           },
           {
             "schema": {
               "type": "integer"
             },
             "in": "query",
-            "name": "page[size]"
+            "name": "page[size]",
+            "description": "The amount of results per page."
           },
           {
             "schema": {
-              "type": "string"
+              "type": "string",
+              "enum": [
+                "created_at",
+                "name",
+                "meal"
+              ]
             },
             "in": "query",
-            "name": "filter",
-            "description": ""
+            "name": "sort",
+            "description": "The property by which the results should be sorted. Prefix `-` to sort descendingly."
           },
           {
             "schema": {
-              "type": "string"
+              "type": "integer"
             },
             "in": "query",
-            "name": "sort"
+            "name": "filter[list]",
+            "description": "The List ID to filter the results by."
+          },
+          {
+            "schema": {
+              "type": "integer"
+            },
+            "in": "query",
+            "name": "filter[meal]",
+            "description": "The Meal ID to filter the results by."
           }
         ]
       },
       "post": {
-        "summary": "POST endpoint",
+        "summary": "Create Item",
         "operationId": "post-items",
         "responses": {
           "200": {
             "description": "OK"
           }
         },
-        "description": "Create a new Item"
+        "description": "Create an Item either unrelated or specifically for a List or Meal.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "default": "application/json"
+            },
+            "in": "header",
+            "name": "Accept",
+            "required": true,
+            "description": ""
+          },
+          {
+            "schema": {
+              "type": "string",
+              "default": "application/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the Item."
+                  },
+                  "list_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "The List ID the Item is being created on."
+                  },
+                  "meal_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "The Meal ID the Item is being created on."
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "description": ""
+        }
       },
+      "parameters": []
+    },
+    "/items/{id}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The Item ID."
+        }
+      ],
       "patch": {
-        "summary": "PATCH endpoint",
-        "operationId": "patch-items",
+        "summary": "Update Item",
+        "operationId": "patch-item",
         "responses": {
           "200": {
             "description": "OK"
           }
+        },
+        "description": "Update an Item either everywhere or specifically for a List or Meal.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "default": "application/json"
+            },
+            "in": "header",
+            "name": "Accept",
+            "description": "",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "default": "application/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The new name of the Item."
+                  },
+                  "list_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "The List ID the Item is being updated on."
+                  },
+                  "meal_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "The Meal ID the Item is being updated on."
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          },
+          "description": ""
         }
       },
       "delete": {
-        "summary": "DELETE endpoint",
-        "operationId": "delete-items",
+        "summary": "Delete Item",
+        "operationId": "delete-item",
         "responses": {
           "200": {
             "description": "OK"
+          }
+        },
+        "description": "Delete an Item either everywhere or specifically from a List or Meal.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "default": "application/json"
+            },
+            "in": "header",
+            "name": "Accept",
+            "description": "",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "default": "application/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "list_id": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "The List ID the Item is being deleted from."
+                  },
+                  "meal_id": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "The Meal ID the Item is being deleted from."
+                  }
+                }
+              }
+            }
+          },
+          "description": ""
+        }
+      }
+    },
+    "/lists": {
+      "get": {
+        "summary": "Get Lists",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "operationId": "get-lists",
+        "description": "Get a collection of Lists."
+      },
+      "post": {
+        "summary": "Create List",
+        "operationId": "post-lists",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Create a List.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "default": "application/json"
+            },
+            "in": "header",
+            "name": "Accept",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "default": "application/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the List."
+                  },
+                  "list_id": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "The List ID the new List should duplicate."
+                  },
+                  "only_incomplete": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "When duplicating a List only copy incomplete Items when set to true, otherwise copy all Items."
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lists/{id}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The List ID."
+        }
+      ],
+      "get": {
+        "summary": "Get List",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "operationId": "get-list",
+        "description": "Get a single List.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "items",
+                "meals"
+              ]
+            },
+            "in": "query",
+            "name": "include",
+            "description": "The resources related to a List to be included in the result."
+          }
+        ]
+      },
+      "patch": {
+        "summary": "Update List",
+        "operationId": "patch-list",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Update a List.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The new name of the List."
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          },
+          "description": ""
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "default": "applcation/json"
+            },
+            "in": "header",
+            "name": "Accept",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "default": "applcation/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "required": true
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete List",
+        "operationId": "delete-list",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Delete a List."
+      }
+    },
+    "/meals": {
+      "get": {
+        "summary": "Get Meals",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "operationId": "get-meals",
+        "description": "Get a collection of Meals."
+      },
+      "post": {
+        "summary": "Create Meal",
+        "operationId": "post-meals",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Create a Meal.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "default": "application/json"
+            },
+            "in": "header",
+            "name": "Accept",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "default": "application/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the Meal."
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/meals/{id}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The Meal ID."
+        }
+      ],
+      "get": {
+        "summary": "Get Meal",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "operationId": "get-meal",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "items",
+                "lists"
+              ]
+            },
+            "in": "query",
+            "name": "include",
+            "description": "The resources related to a Meal to be included in the result."
+          }
+        ],
+        "description": "Get a single Meal."
+      },
+      "patch": {
+        "summary": "Update Meal",
+        "operationId": "patch-meal",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "default": "applcation/json"
+            },
+            "in": "header",
+            "name": "Accept",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "default": "applcation/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The new name of the Meal."
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "description": "Update a Meal."
+      },
+      "delete": {
+        "summary": "Delete Meal",
+        "operationId": "delete-meal",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Delete a Meal."
+      }
+    },
+    "/completed-items": {
+      "post": {
+        "summary": "Complete Item on List",
+        "operationId": "post-completed-items",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "description": "Set an Item as completed on a List.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "item_id": {
+                    "type": "number",
+                    "description": "The Item ID you would like to complete."
+                  },
+                  "list_id": {
+                    "type": "number",
+                    "description": "The List ID the Item is being completed on."
+                  }
+                },
+                "required": [
+                  "item_id",
+                  "list_id"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "default": "application/json"
+            },
+            "in": "header",
+            "name": "Accept",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "default": "application/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/completed-items/{id}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The completed Item ID."
+        }
+      ],
+      "delete": {
+        "summary": "Incomplete Item on List",
+        "operationId": "delete-completed-item",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "description": "Set an Item as incompleted on a List.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "list_id": {
+                    "type": "number",
+                    "description": "The List ID the Item is being incompleted on."
+                  }
+                },
+                "required": [
+                  "list_id"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "default": "application/json"
+            },
+            "in": "header",
+            "name": "Accept",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "default": "application/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/list-meals/{id}": {
+      "get": {
+        "summary": "Get List Meals",
+        "tags": [],
+        "responses": {},
+        "operationId": "get-list-meals",
+        "description": "Get a collection of Meals related to the List."
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The List ID."
+        }
+      ],
+      "post": {
+        "summary": "Create List Meal",
+        "operationId": "post-list-meals",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "default": "application/json"
+            },
+            "in": "header",
+            "name": "Accept",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "default": "application/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "required": true
+          }
+        ],
+        "description": "Add a Meal to a List.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "meal_id": {
+                    "type": "integer",
+                    "description": "The Meal ID being added to the List."
+                  }
+                },
+                "required": [
+                  "meal_id"
+                ]
+              }
+            }
           }
         }
       }
@@ -97,28 +798,28 @@
       "Item": {
         "title": "Item",
         "type": "object",
-        "description": "This object represents an Item owned by a User",
+        "description": "This object represents an Item owned by a User.",
         "properties": {
           "id": {
             "type": "integer",
-            "description": "The unique identifier of the Item"
+            "description": "The unique identifier of the Item."
           },
           "user_id": {
             "type": "integer",
-            "description": "The User the Item belongs to"
+            "description": "The User the Item belongs to."
           },
           "name": {
             "type": "string",
-            "description": "The name of the Item"
+            "description": "The name of the Item."
           },
           "created_at": {
             "type": "string",
             "format": "date-time",
-            "description": "The timestamp the Item was created"
+            "description": "The timestamp the Item was created."
           },
           "updated_at": {
             "type": "string",
-            "description": "The timestamp the Item was last updated",
+            "description": "The timestamp the Item was last updated.",
             "format": "date-time"
           }
         },
@@ -140,28 +841,28 @@
       "Liste": {
         "title": "Liste",
         "type": "object",
-        "description": "This object represents a List owned by a User",
+        "description": "This object represents a List owned by a User.",
         "properties": {
           "id": {
             "type": "integer",
-            "description": "The unique identifier of the List"
+            "description": "The unique identifier of the List."
           },
           "user_id": {
             "type": "integer",
-            "description": "The User the List belongs to"
+            "description": "The User the List belongs to."
           },
           "name": {
             "type": "string",
-            "description": "The name of the List"
+            "description": "The name of the List."
           },
           "created_at": {
             "type": "string",
             "format": "date-time",
-            "description": "The timestamp the List was created"
+            "description": "The timestamp the List was created."
           },
           "updated_at": {
             "type": "string",
-            "description": "The timestamp the List was last updated",
+            "description": "The timestamp the List was last updated.",
             "format": "date-time"
           }
         },
@@ -183,28 +884,28 @@
       "Meal": {
         "title": "Meal",
         "type": "object",
-        "description": "This object represents a Meal owned by a User",
+        "description": "This object represents a Meal owned by a User.",
         "properties": {
           "id": {
             "type": "integer",
-            "description": "The unique identifier of the Meal"
+            "description": "The unique identifier of the Meal."
           },
           "user_id": {
             "type": "integer",
-            "description": "The User the Meal belongs to"
+            "description": "The User the Meal belongs to."
           },
           "name": {
             "type": "string",
-            "description": "The name of the Meal"
+            "description": "The name of the Meal."
           },
           "created_at": {
             "type": "string",
-            "description": "The timestamp the Meal was created",
+            "description": "The timestamp the Meal was created.",
             "format": "date-time"
           },
           "updated_at": {
             "type": "string",
-            "description": "The timestamp the Meal was last updated",
+            "description": "The timestamp the Meal was last updated.",
             "format": "date-time"
           }
         },
@@ -226,7 +927,7 @@
       "User": {
         "title": "User",
         "type": "object",
-        "description": "This object represents a User",
+        "description": "This object represents a User.",
         "x-examples": {
           "basic-example": {
             "id": 1,
@@ -242,37 +943,37 @@
         "properties": {
           "id": {
             "type": "integer",
-            "description": "The unique identifier of the User"
+            "description": "The unique identifier of the User."
           },
           "name": {
             "type": "string",
-            "description": "The full name of the User"
+            "description": "The full name of the User."
           },
           "email": {
             "type": "string",
-            "description": "The email address of the User"
+            "description": "The email address of the User."
           },
           "email_verified_at": {
             "type": "string",
             "format": "date-time",
-            "description": "The timestamp the User verified their email address"
+            "description": "The timestamp the User verified their email address."
           },
           "password": {
             "type": "string",
-            "description": "The hashed password of the User"
+            "description": "The hashed password of the User."
           },
           "remember_token": {
             "type": "string",
-            "description": "The random unique remember token of the User"
+            "description": "The random unique remember token of the User."
           },
           "created_at": {
             "type": "string",
-            "description": "The timestamp the User was created",
+            "description": "The timestamp the User was created.",
             "format": "date-time"
           },
           "updated_at": {
             "type": "string",
-            "description": "The timestamp the User was last updated",
+            "description": "The timestamp the User was last updated.",
             "format": "date-time"
           }
         },
@@ -286,7 +987,7 @@
       "PersonalAccessToken": {
         "title": "PersonalAccessToken",
         "type": "object",
-        "description": "This object represents a token owned by a tokenable (User) that is used to authenticate",
+        "description": "This object represents a token owned by a tokenable (User) that is used to authenticate.",
         "x-examples": {
           "basic-example": {
             "id": 1,
@@ -303,41 +1004,41 @@
         "properties": {
           "id": {
             "type": "integer",
-            "description": "The unique identifier of the Token"
+            "description": "The unique identifier of the Token."
           },
           "tokenable_type": {
             "type": "string",
-            "description": "The tokenable type (Model) the Token belongs to"
+            "description": "The tokenable type (Model) the Token belongs to."
           },
           "tokenable_id": {
             "type": "integer",
-            "description": "The tokenable id (Resource ID) the Token belongs to"
+            "description": "The tokenable id (Resource ID) the Token belongs to."
           },
           "name": {
             "type": "string",
-            "description": "The name of the Token"
+            "description": "The name of the Token."
           },
           "token": {
             "type": "string",
-            "description": "The random hashed unique token that represents the Token"
+            "description": "The random hashed unique Token that us used to authenticate."
           },
           "abilities": {
             "type": "string",
-            "description": "The abilities the tokenable has using this Token"
+            "description": "The abilities the tokenable has using this Token."
           },
           "last_used_at": {
             "type": "string",
             "format": "date-time",
-            "description": "The timestamp the Token was last used"
+            "description": "The timestamp the Token was last used."
           },
           "created_at": {
             "type": "string",
             "format": "date-time",
-            "description": "The timestamp the Token was created"
+            "description": "The timestamp the Token was created."
           },
           "updated_at": {
             "type": "string",
-            "description": "The timestamp the Token was last updated",
+            "description": "The timestamp the Token was last updated.",
             "format": "date-time"
           }
         },
@@ -353,8 +1054,7 @@
     "securitySchemes": {
       "Authorization": {
         "type": "http",
-        "scheme": "bearer",
-        "description": ""
+        "scheme": "bearer"
       }
     }
   },
