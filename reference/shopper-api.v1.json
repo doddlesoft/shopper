@@ -3,7 +3,7 @@
   "info": {
     "title": "Shopper API",
     "version": "1.0",
-    "description": "",
+    "description": "API reference for the Shopper API.",
     "contact": {
       "name": "Sam Bindoff",
       "email": "sam@shopper.test",
@@ -20,7 +20,6 @@
     "/items": {
       "get": {
         "summary": "Get Items",
-        "tags": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -282,7 +281,6 @@
     "/lists": {
       "get": {
         "summary": "Get Lists",
-        "tags": [],
         "responses": {
           "200": {
             "description": "OK"
@@ -368,7 +366,6 @@
       ],
       "get": {
         "summary": "Get List",
-        "tags": [],
         "responses": {
           "200": {
             "description": "OK"
@@ -454,7 +451,6 @@
     "/meals": {
       "get": {
         "summary": "Get Meals",
-        "tags": [],
         "responses": {
           "200": {
             "description": "OK"
@@ -526,7 +522,6 @@
       ],
       "get": {
         "summary": "Get Meal",
-        "tags": [],
         "responses": {
           "200": {
             "description": "OK"
@@ -727,8 +722,11 @@
     "/list-meals/{id}": {
       "get": {
         "summary": "Get List Meals",
-        "tags": [],
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
         "operationId": "get-list-meals",
         "description": "Get a collection of Meals related to the List."
       },
