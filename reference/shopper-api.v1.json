@@ -22,8 +22,23 @@
         "summary": "Get Items",
         "responses": {
           "200": {
-            "description": "OK",
-            "headers": {}
+            "description": "A collection of Items.",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "description": "An array of Item objects.",
+                      "items": {}
+                    }
+                  }
+                },
+                "examples": {}
+              }
+            }
           }
         },
         "operationId": "get-items",
@@ -60,19 +75,12 @@
           },
           {
             "schema": {
-              "type": "integer"
+              "type": "string",
+              "example": "list:1"
             },
             "in": "query",
-            "name": "filter[list]",
-            "description": "The List ID to filter the results by."
-          },
-          {
-            "schema": {
-              "type": "integer"
-            },
-            "in": "query",
-            "name": "filter[meal]",
-            "description": "The Meal ID to filter the results by."
+            "name": "filter",
+            "description": "The resource type and ID, seperated by a colon, to filter the results by."
           }
         ]
       },
@@ -81,7 +89,34 @@
         "operationId": "post-items",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "The existing Item based on the name in the request body.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Item"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "The newly created Item.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Item"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "description": "Create an Item either unrelated or specifically for a List or Meal.",
@@ -161,7 +196,19 @@
         "operationId": "patch-item",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "The updated Item.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Item"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "description": "Update an Item either everywhere or specifically for a List or Meal.",
@@ -224,8 +271,8 @@
         "summary": "Delete Item",
         "operationId": "delete-item",
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "No Content"
           }
         },
         "description": "Delete an Item either everywhere or specifically from a List or Meal.",
@@ -258,14 +305,14 @@
                 "properties": {
                   "list_id": {
                     "type": [
-                      "number",
+                      "integer",
                       "null"
                     ],
                     "description": "The List ID the Item is being deleted from."
                   },
                   "meal_id": {
                     "type": [
-                      "number",
+                      "integer",
                       "null"
                     ],
                     "description": "The Meal ID the Item is being deleted from."
@@ -283,7 +330,21 @@
         "summary": "Get Lists",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "A collection of Lists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "description": "An array of List objects.",
+                      "items": {}
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "operationId": "get-lists",
@@ -329,18 +390,18 @@
                     "description": "The name of the List."
                   },
                   "list_id": {
+                    "description": "The List ID the new List should copy.",
                     "type": [
-                      "number",
+                      "integer",
                       "null"
-                    ],
-                    "description": "The List ID the new List should duplicate."
+                    ]
                   },
                   "only_incomplete": {
                     "type": [
                       "boolean",
                       "null"
                     ],
-                    "description": "When duplicating a List only copy incomplete Items when set to true, otherwise copy all Items."
+                    "description": "When copying a List only include incomplete Items when set to true, otherwise copy all Items."
                   }
                 },
                 "required": [
@@ -368,7 +429,19 @@
         "summary": "Get List",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Liste"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "operationId": "get-list",
@@ -441,8 +514,8 @@
         "summary": "Delete List",
         "operationId": "delete-list",
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "No Content"
           }
         },
         "description": "Delete a List."
@@ -453,7 +526,21 @@
         "summary": "Get Meals",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "A collection of Meals.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "description": "An array of Meal objects.",
+                      "items": {}
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "operationId": "get-meals",
@@ -596,8 +683,8 @@
         "summary": "Delete Meal",
         "operationId": "delete-meal",
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "No Content"
           }
         },
         "description": "Delete a Meal."
@@ -609,7 +696,7 @@
         "operationId": "post-completed-items",
         "responses": {
           "204": {
-            "description": "No Content"
+            "description": "No Content."
           }
         },
         "description": "Set an Item as completed on a List.",
@@ -620,12 +707,12 @@
                 "type": "object",
                 "properties": {
                   "item_id": {
-                    "type": "number",
+                    "type": "integer",
                     "description": "The Item ID you would like to complete."
                   },
                   "list_id": {
-                    "type": "number",
-                    "description": "The List ID the Item is being completed on."
+                    "description": "The List ID the Item is being completed on.",
+                    "type": "integer"
                   }
                 },
                 "required": [
@@ -675,7 +762,7 @@
         "operationId": "delete-completed-item",
         "responses": {
           "204": {
-            "description": "No Content"
+            "description": "No Content."
           }
         },
         "description": "Set an Item as incompleted on a List.",
@@ -686,7 +773,7 @@
                 "type": "object",
                 "properties": {
                   "list_id": {
-                    "type": "number",
+                    "type": "integer",
                     "description": "The List ID the Item is being incompleted on."
                   }
                 },
@@ -724,7 +811,21 @@
         "summary": "Get List Meals",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "A collection of Meals related to the List.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "description": "An array of Meal objects.",
+                      "items": {}
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "operationId": "get-list-meals",
