@@ -26,6 +26,6 @@ $factory->afterCreatingState(Liste::class, 'with_meals', function ($list) {
     $meal1 = factory(Meal::class)->states(['with_items'])->create(['user_id' => $list->user_id]);
     $meal2 = factory(Meal::class)->states(['with_items'])->create(['user_id' => $list->user_id]);
 
-    $list->meals()->attach([$meal1->id, $meal2->id]);
+    $list->meals()->attach([$meal1->id, $meal2->id], ['created_at' => now(), 'updated_at' => now()]);
     $list->items()->saveMany($meal1->items->merge($meal2->items));
 });
