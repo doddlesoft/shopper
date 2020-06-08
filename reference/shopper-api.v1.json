@@ -354,8 +354,20 @@
         "summary": "Create List",
         "operationId": "post-lists",
         "responses": {
-          "200": {
-            "description": "OK"
+          "201": {
+            "description": "The newly created List.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Liste"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "description": "Create a List.",
@@ -429,7 +441,7 @@
         "summary": "Get List",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "The List.",
             "content": {
               "application/json": {
                 "schema": {
@@ -466,7 +478,19 @@
         "operationId": "patch-list",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "The updated List.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Liste"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "description": "Update a List.",
@@ -493,16 +517,17 @@
           {
             "schema": {
               "type": "string",
-              "default": "applcation/json"
+              "default": "application/json"
             },
             "in": "header",
             "name": "Accept",
-            "required": true
+            "required": true,
+            "description": ""
           },
           {
             "schema": {
               "type": "string",
-              "default": "applcation/json"
+              "default": "application/json"
             },
             "in": "header",
             "name": "Content-Type",
@@ -550,8 +575,20 @@
         "summary": "Create Meal",
         "operationId": "post-meals",
         "responses": {
-          "200": {
-            "description": "OK"
+          "201": {
+            "description": "The newly created Meal.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Meal"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "description": "Create a Meal.",
@@ -611,7 +648,19 @@
         "summary": "Get Meal",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "The Meal object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Meal"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "operationId": "get-meal",
@@ -636,14 +685,26 @@
         "operationId": "patch-meal",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "The updated Meal.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Meal"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "parameters": [
           {
             "schema": {
               "type": "string",
-              "default": "applcation/json"
+              "default": "application/json"
             },
             "in": "header",
             "name": "Accept",
@@ -652,7 +713,7 @@
           {
             "schema": {
               "type": "string",
-              "default": "applcation/json"
+              "default": "application/json"
             },
             "in": "header",
             "name": "Content-Type",
@@ -675,7 +736,8 @@
                 ]
               }
             }
-          }
+          },
+          "description": ""
         },
         "description": "Update a Meal."
       },
@@ -846,8 +908,8 @@
         "summary": "Create List Meal",
         "operationId": "post-list-meals",
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "No Content"
           }
         },
         "parameters": [
