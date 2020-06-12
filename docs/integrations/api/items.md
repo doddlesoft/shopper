@@ -74,9 +74,9 @@ There are three options for sorting your items, these are:
 
 By default the results will be sorted in ascending order, to switch this to descending order prepend the sort value with a hyphen, for example `-name`.
 
-If the sort query paramemter isn't provided in the request, `created_at` in ascending order is used as the fallback method or sorting.
+If the sort query paramemter isn't provided in the request, the items `id` will be used as a fallback to sort in ascending order.
 
-The response body when sorting is structured in exactly the same way as all other `GET` requests, however, when sorting by meal the `meal_name` is appended to each item.
+When using sort, the response body is structured in exactly the same way as all other `GET` requests, however, when sorting by meal the `meal_name` is appended to each item.
 
 <!-- lineNumbers: false -->
 ```json
@@ -95,7 +95,7 @@ The response body when sorting is structured in exactly the same way as all othe
 }
 ```
 
-Items which aren't related to a meal will always appear after those that are, regardless of whether the `meal` is sorted in ascending or descending order.
+Items which don't have a meal will always appear after those that do, regardless of whether the `meal` is sorted in ascending or descending order.
 
 <!-- theme: info -->
 > Please note, the `meal` sort option is superfluous when filtering your items by a meal.
@@ -119,7 +119,7 @@ The response body returned from this request would give you results filtered for
 
 ### Creating an item
 
-To create an item simply send a `POST` request to the `/api/items` endpoint containing the name of the item in the request payload.
+To create an item send a `POST` request to the `/api/items` endpoint containing the name of the item in the request payload.
 
 ```
 $ curl -X POST http://shopper.test/api/items \
@@ -138,7 +138,7 @@ We :heart: JSON, so your request payload should always be valid JSON. The actual
 }
 ```
 
-If your request succeeds, the newly created item will be returned in the response body.
+If your request succeeds, the new item will be returned in the response body.
 
 <!-- lineNumbers: false -->
 ```json
@@ -158,7 +158,7 @@ If your request succeeds, the newly created item will be returned in the respons
 
 #### Creating an item for a specific list
 
-You also have the option of creating an item for a specific list. To do so simply include the list ID in the request payload along with the name of the item.
+You also have the option of creating an item for a specific list. To do so include the list ID in the request payload along with the name of the item.
 
 ```
 $ curl -X POST http://shopper.test/api/items \
@@ -170,7 +170,7 @@ $ curl -X POST http://shopper.test/api/items \
 
 #### Creating an item for a specific meal
 
-You also have the option of creating an item for a specific meal. To do so simply include the meal ID in the request payload along with the name of the item.
+You also have the option of creating an item for a specific meal. To do so include the meal ID in the request payload along with the name of the item.
 
 ```
 $ curl -X POST http://shopper.test/api/items \
@@ -180,7 +180,7 @@ $ curl -X POST http://shopper.test/api/items \
   -d '{"name": "Example Item Five", "meal_id": 1}'
 ```
 
-The response body when creating an item for a list or meal is exactly the same as above, you simply get the newly created item.
+The response body when creating an item for a list or meal is exactly the same as above, you just get the new item.
 
 #### Adding an existing item to a list or meal
 
@@ -200,18 +200,18 @@ This means no new item is created and the existing item is retrieved and added t
 
 We like to keep our data clean and tidy, and one of the ways we do this is by ensuring there are no duplicate entries in our database.
 
-Therefore, whenever a `POST` request is sent to the `/api/items` endpoint we first check to see if there is another item with the same name. If one is found in your account, we will simply use and return this item rather than create a new one.
+Therefore, whenever a `POST` request is sent to the `/api/items` endpoint we first check to see if there is another item with the same name. If an item is found, we will simply use and return this item rather than create a new one.
 
 If an `item_id` is provided in the payload, there's no need to perform this check and the existing item is always used and returned.
 
-The only difference in responses for these scenarios is that if a new item is created a `204 Created` status is returned, otherwise, if the item already exists a `200 OK` status is returned.
+The only difference in responses for these scenarios is that if a new item is created a `201 Created` status is returned, otherwise, if the item already exists a `200 OK` status is returned.
 
 <!-- theme: warning -->
 > Please note, if a `name` and `item_id` are both present in the same request the `item_id` will take precedence, meaning the existing item with the ID provided will be added to the list or meal.
 
 ### Updating an item
 
-To update an item use the `PATCH` method and include the new name of the item in the request payload.
+To update an item send a `PATCH` request to the `/api/items/{id}` endpoint containing the new name of the item in the request payload.
 
 ```
 $ curl -X PATCH http://shopper.test/api/items/1 \
@@ -236,21 +236,37 @@ If your request succeeds, the updated item will be returned in the response body
 }
 ```
 
+When updating an item that has been used on a list or meal, this needs to be preserved. Therefore, instead of updating the item we [create](#creating-an-item) a new item to preserve this history. A `201 Created` status is returned in this scenario along with the new item in the response body.
+
+If the item hasn't been used on a list or meal, the item is updated and a `200 OK` status is returned along with the updated item in the response body.
+
 #### Updating an item for a specific list
 
-You also have the option of updating an item for a specific list rather than everywhere. To do so include the list ID in the request payload.
+You also have the option of updating an item for a specific list. To do so include the list ID in the request payload along with the new name of the item.
 
 ```
-...
+$ curl -X PATCH http://shopper.test/api/items/1 \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{"name": "Example Item One Updated", "list_id": 1}'
 ```
 
 #### Updating an item for a specific meal
 
-You also have the option of updating an item for a specific meal rather than everywhere. To do so include the meal ID in the request payload.
+You also have the option of updating an item for a specific meal. To do so include the meal ID in the request payload along with the new name of the item.
 
 ```
-...
+$ curl -X PATCH http://shopper.test/api/items/1 \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{"name": "Example Item One Updated", "meal_id": 1}'
 ```
+
+When updating an item for a specific list or meal, if the item is used elsewhere on another list or meal, this needs to be preserved. Therefore, instead of updating the item, we detach it from the list or meal and [create](#creating-an-item) a new item to preserve this history. A `201 Created` status is returned in this scenario along with the new item in the response body.
+
+If the item hasn't been used elsewhere, the item is updated and a `200 OK` status is returned along with the updated item in the response body.
 
 ### Deleting an item
 
@@ -266,14 +282,18 @@ $ curl -X PATCH http://shopper.test/api/items/1 \
 Notice how we're calling the `DELETE` method on the `/api/items/1` endpoint. The `1` in the URL determines which item to delete.
 
 <!-- theme: warning -->
-> Please note, when deleting an item that is also used on a list or meal, it will be removed from them too and history will be lost.
+> Please note, when deleting an item that is also used on a list or meal, it will be removed from them too and all history will be lost.
 
 #### Deleting an item from a specific list
 
 You also have the option of deleting an item from a specific list rather than from everywhere. To do so include the list ID in the request payload.
 
 ```
-...
+$ curl -X DELETE http://shopper.test/api/items/1 \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{"list_id": 1}'
 ```
 
 #### Deleting an item from a specific meal
@@ -281,5 +301,13 @@ You also have the option of deleting an item from a specific list rather than fr
 You also have the option of deleting an item from a specific meal rather than from everywhere. To do so include the meal ID in the request payload.
 
 ```
-...
+$ curl -X DELETE http://shopper.test/api/items/1 \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{"meal_id": 1}'
 ```
+
+When deleting an item from a specific list or meal, if it is used elsewhere then it is preserved and remains an item on this list or meal. If the item isn't used elsewhere it is deleted from your account.
+
+For all `DELETE` requests a `204 No Content` status is returned with an empty response body.
