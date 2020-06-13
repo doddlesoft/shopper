@@ -70,11 +70,18 @@ When getting your items using any of the methods above, you have the option of s
 There are three options for sorting your items, these are:
 - `created_at` - chronologically using the date/time the item was first created.
 - `name` - alphabetically using the item name.
-- `meal` - alphabetically using the meal name the item was created for.
+- `meal` - alphabetically using the meal name the item relates to.
+
+```
+$ curl http://shopper.test/api/items?sort=name \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json'
+```
 
 By default the results will be sorted in ascending order, to switch this to descending order prepend the sort value with a hyphen, for example `-name`.
 
-If the sort query paramemter isn't provided in the request, the items `id` will be used as a fallback to sort in ascending order.
+If the sort query paramemter isn't provided in the request, the items `id` will be used as a fallback to sort the results in ascending order.
 
 When using sort, the response body is structured in exactly the same way as all other `GET` requests, however, when sorting by meal the `meal_name` is appended to each item.
 
@@ -95,7 +102,7 @@ When using sort, the response body is structured in exactly the same way as all 
 }
 ```
 
-Items which don't have a meal will always appear after those that do, regardless of whether the `meal` is sorted in ascending or descending order.
+Items which don't have a meal will always appear after those that do, with a `null` value for `meal_name`, regardless of whether the `meal` is sorted in ascending or descending order.
 
 <!-- theme: info -->
 > Please note, the `meal` sort option is superfluous when filtering your items by a meal.
@@ -111,11 +118,49 @@ $ curl http://shopper.test/api/items?filter=list:1&sort=name \
   -H 'Content-Type: application/json'
 ```
 
-The response body returned from this request would give you results filtered for the list with ID `1` and sorted by the item `name` in ascending order.
+The response body returned from this request will give you results filtered for the list with ID `1` and sorted by the item `name` in ascending order.
 
 #### Paginating items
 
-...
+When using any of the `GET` requests to `/api/items` outlined above, you have the option of paginating your results using the `page[number]` and `page[size]` query parameters.
+
+- `page[number]` - the page number you'd like to offset the results by.
+- `page[size]` - the number of items you would like returned per page.
+
+```
+$ curl http://shopper.test/api/items?filter=list:1&sort=name \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json'
+```
+
+When paginating your results the response body contains the same `data` key which includes your items just like all other `GET` requests. But along with the results you'll also get some pagination-related metadata as well as useful links.
+
+```json
+{
+  "data": [
+    ...
+  ],
+  "links": {
+    "first": "http://shopper.test/api/items?page%5Bnumber%5D=1",
+    "last": "http://shopper.test/api/items?page%5Bnumber%5D=9",
+    "prev": "http://shopper.test/api/items?page%5Bnumber%5D=1",
+    "next": "http://shopper.test/api/items?page%5Bnumber%5D=3"
+  },
+  "meta": {
+    "current_page": 2,
+    "from": 3,
+    "last_page": 9,
+    "path": "http://shopper.test/api/items",
+    "per_page": "2",
+    "to": 4,
+    "total": 18
+  }
+}
+```
+
+<!-- theme: info -->
+> Using the pagination parameters allows you to split up your data to improve the performance and navigability of the API, but it may not always be necessary.
 
 ### Creating an item
 
