@@ -37,16 +37,24 @@ class ItemController
                 $query->orderBy($sortColumn, $sortDirection);
             });
 
-        return new ItemCollection(
-            request()->filled('page') ?
-                $query->paginate(
-                    request()->query('page')['size'],
-                    ['*'],
-                    'page[number]',
-                    request()->query('page')['number'],
-                ) :
-                $query->get()
-        );
+        if (request()->filled('page')) {
+            return new ItemCollection(
+                $query
+                    ->paginate(
+                        request()->query('page')['size'],
+                        ['*'],
+                        'page[number]',
+                        request()->query('page')['number'],
+                    )
+                    ->appends([
+                        'filter' => request()->query('filter'),
+                        'sort' => request()->query('sort'),
+                        'page[size]' => request()->query('page')['size'],
+                    ])
+            );
+        }
+
+        return new ItemCollection($query->get());
     }
 
     public function store(CreateItemRequest $request, CreateItem $action): ItemResource
