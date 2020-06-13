@@ -49,16 +49,16 @@
               "type": "integer"
             },
             "in": "query",
-            "name": "page[number]",
-            "description": "The page number for the results."
+            "name": "page[size]",
+            "description": "The amount of results per page."
           },
           {
             "schema": {
               "type": "integer"
             },
             "in": "query",
-            "name": "page[size]",
-            "description": "The amount of results per page."
+            "name": "page[number]",
+            "description": "The page number for the results."
           },
           {
             "schema": {

@@ -4,7 +4,7 @@ We'll assume you've already got API [authentication](./authentication.md) covere
 
 ### Get all items in your account
 
-The `/api/items` endpoint lists all the items in your account, just send a `GET` request to this endpoint using your API token in the Authorization header.
+The `/api/items` endpoint lists all the items in your account, just send it a `GET` request using your API token in the Authorization header.
 
 ```
 $ curl http://shopper.test/api/items \
@@ -22,14 +22,14 @@ The response body contains all the details for every item you've ever created.
     {
       "id": 1,
       "user_id": 1,
-      "name": "Example Item One",
+      "name": "Example Item 1",
       "created_at": "2020-06-01T12:00:00.000000Z",
       "updated_at": "2020-06-01T12:00:00.000000Z"
     },
     {
       "id": 2,
       "user_id": 1,
-      "name": "Example Item Two",
+      "name": "Example Item 2",
       "created_at": "2020-06-01T12:00:00.000000Z",
       "updated_at": "2020-06-01T12:00:00.000000Z"
     }
@@ -92,7 +92,7 @@ When using sort, the response body is structured in exactly the same way as all 
     {
       "id": 1,
       "user_id": 1,
-      "name": "Example Item One",
+      "name": "Example Item 1",
       "created_at": "2020-06-01T12:00:00.000000Z",
       "updated_at": "2020-06-01T12:00:00.000000Z",
       "meal_name": "Example Meal"
@@ -104,7 +104,7 @@ When using sort, the response body is structured in exactly the same way as all 
 
 Items which don't have a meal will always appear after those that do, with a `null` value for `meal_name`, regardless of whether the `meal` is sorted in ascending or descending order.
 
-<!-- theme: info -->
+<!-- theme: warning -->
 > Please note, the `meal` sort option is superfluous when filtering your items by a meal.
 
 #### Filtering and sorting at the same time
@@ -122,13 +122,13 @@ The response body returned from this request will give you results filtered for 
 
 #### Paginating items
 
-When using any of the `GET` requests to `/api/items` outlined above, you have the option of paginating your results using the `page[number]` and `page[size]` query parameters.
+When using any of the `GET` requests to `/api/items` outlined above, you have the option of paginating your results using the `page[size]` and `page[number]` query parameters.
 
+- `page[size]` - the number of items you would like returned.
 - `page[number]` - the page number you'd like to offset the results by.
-- `page[size]` - the number of items you would like returned per page.
 
 ```
-$ curl http://shopper.test/api/items?filter=list:1&sort=name \
+$ curl http://shopper.test/api/items?page[size]=2&page[number]=3 \
   -H 'Authorization: Bearer YOUR_API_TOKEN' \
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json'
@@ -136,31 +136,86 @@ $ curl http://shopper.test/api/items?filter=list:1&sort=name \
 
 When paginating your results the response body contains the same `data` key which includes your items just like all other `GET` requests. But along with the results you'll also get some pagination-related metadata as well as useful links.
 
+This is how the response body would look if you performed the above request and had a total of 10 items in your account.
+
+<!-- lineNumbers: false -->
 ```json
 {
   "data": [
     ...
   ],
   "links": {
-    "first": "http://shopper.test/api/items?page%5Bnumber%5D=1",
-    "last": "http://shopper.test/api/items?page%5Bnumber%5D=9",
-    "prev": "http://shopper.test/api/items?page%5Bnumber%5D=1",
-    "next": "http://shopper.test/api/items?page%5Bnumber%5D=3"
+    "first": "http://shopper.test/api/items?page[size]=2&page[number]=1",
+    "last": "http://shopper.test/api/items?page[size]=2&page[number]=5",
+    "prev": "http://shopper.test/api/items?page[size]=2&page[number]=2",
+    "next": "http://shopper.test/api/items?page[size]=2&page[number]=4"
   },
   "meta": {
-    "current_page": 2,
-    "from": 3,
-    "last_page": 9,
+    "current_page": 3,
+    "from": 5,
+    "last_page": 5,
     "path": "http://shopper.test/api/items",
     "per_page": "2",
-    "to": 4,
-    "total": 18
+    "to": 6,
+    "total": 10
   }
 }
 ```
 
 <!-- theme: info -->
 > Using the pagination parameters allows you to split up your data to improve the performance and navigability of the API, but it may not always be necessary.
+
+#### Filtering, sorting and paginating at the same time
+
+Just like combining filtering and sorting, you can also add pagination to the request to use all three at the same time. For example, you can get all items for a list or meal, sort them accordingly and paginate them to return a certain amount of items offset as you wish.
+
+```
+$ curl http://shopper.test/api/items?filter=list:1&sort=name&page[size]=2&page[number]=3 \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json'
+```
+
+The response body returned from this request will give you results filtered for the list with ID 1, sorted by the item name in ascending order and only contain two items that are offset by three pages.
+
+This is how the response body would look if you performed the above request and had a total of 10 items on the list.
+
+<!-- lineNumbers: false -->
+```json
+{
+  "data": [
+    {
+      "id": 5,
+      "user_id": 1,
+      "name": "Example Item 5",
+      "created_at": "2020-06-01T12:00:00.000000Z",
+      "updated_at": "2020-06-01T12:00:00.000000Z",
+    },
+    {
+      "id": 6,
+      "user_id": 1,
+      "name": "Example Item 6",
+      "created_at": "2020-06-01T12:00:00.000000Z",
+      "updated_at": "2020-06-01T12:00:00.000000Z",
+    }
+  ],
+  "links": {
+    "first": "http://shopper.test/api/items?filter=list:1&sort=name&page[size]=2&page[number]=1",
+    "last": "http://shopper.test/api/items?filter=list:1&sort=name&page[size]=2&page[number]=5",
+    "prev": "http://shopper.test/api/items?filter=list:1&sort=name&page[size]=2&page[number]=2",
+    "next": "http://shopper.test/api/items?filter=list:1&sort=name&page[size]=2&page[number]=4"
+  },
+  "meta": {
+    "current_page": 3,
+    "from": 5,
+    "last_page": 5,
+    "path": "http://shopper.test/api/items",
+    "per_page": "2",
+    "to": 6,
+    "total": 10
+  }
+}
+```
 
 ### Creating an item
 
@@ -171,15 +226,15 @@ $ curl -X POST http://shopper.test/api/items \
   -H 'Authorization: Bearer YOUR_API_TOKEN' \
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json' \
-  -d '{"name": "Example Item Three"}'
+  -d '{"name": "Example Item 3"}'
 ```
 
-We :heart: JSON, so your request payload should always be valid JSON. The actual payload, when formatted, looks like this.
+As you can probably tell, we :heart: JSON, so your request payload should always be valid JSON. The actual payload, when formatted, looks like this.
 
 <!-- lineNumbers: false -->
 ```json
 {
-  "name": "Example Item Three"
+  "name": "Example Item 3"
 }
 ```
 
@@ -191,7 +246,7 @@ If your request succeeds, the new item will be returned in the response body.
   "data": {
     "id": 3,
     "user_id": 1,
-    "name": "Example Item Three",
+    "name": "Example Item 3",
     "created_at": "2020-06-01T12:00:00.000000Z",
     "updated_at": "2020-06-01T12:00:00.000000Z"
   }
@@ -210,7 +265,7 @@ $ curl -X POST http://shopper.test/api/items \
   -H 'Authorization: Bearer YOUR_API_TOKEN' \
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json' \
-  -d '{"name": "Example Item Four", "list_id": 1}'
+  -d '{"name": "Example Item 4", "list_id": 1}'
 ```
 
 #### Creating an item for a specific meal
@@ -222,7 +277,7 @@ $ curl -X POST http://shopper.test/api/items \
   -H 'Authorization: Bearer YOUR_API_TOKEN' \
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json' \
-  -d '{"name": "Example Item Five", "meal_id": 1}'
+  -d '{"name": "Example Item 5", "meal_id": 1}'
 ```
 
 The response body when creating an item for a list or meal is exactly the same as above, you just get the new item.
@@ -249,10 +304,10 @@ Therefore, whenever a `POST` request is sent to the `/api/items` endpoint we fir
 
 If an `item_id` is provided in the payload, there's no need to perform this check and the existing item is always used and returned.
 
-The only difference in responses for these scenarios is that if a new item is created a `201 Created` status is returned, otherwise, if the item already exists a `200 OK` status is returned.
+The only difference in response to these scenarios is that if a new item is created a `201 Created` status is returned, otherwise, if the item already exists a `200 OK` status is returned.
 
 <!-- theme: warning -->
-> Please note, if a `name` and `item_id` are both present in the same request the `item_id` will take precedence, meaning the existing item with the ID provided will be added to the list or meal.
+> Please note, if `name` and `item_id` are both present in the same request the `item_id` will take precedence, meaning the existing item with the ID provided will be added to the list or meal.
 
 ### Updating an item
 
@@ -263,7 +318,7 @@ $ curl -X PATCH http://shopper.test/api/items/1 \
   -H 'Authorization: Bearer YOUR_API_TOKEN' \
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json' \
-  -d '{"name": "Example Item One Updated"}'
+  -d '{"name": "Example Item 1 Updated"}'
 ```
 
 If your request succeeds, the updated item will be returned in the response body.
@@ -274,7 +329,7 @@ If your request succeeds, the updated item will be returned in the response body
   "data": {
     "id": 1,
     "user_id": 1,
-    "name": "Example Item One Updated",
+    "name": "Example Item 1 Updated",
     "created_at": "2020-06-01T12:00:00.000000Z",
     "updated_at": "2020-06-01T12:00:00.000000Z"
   }
@@ -294,7 +349,7 @@ $ curl -X PATCH http://shopper.test/api/items/1 \
   -H 'Authorization: Bearer YOUR_API_TOKEN' \
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json' \
-  -d '{"name": "Example Item One Updated", "list_id": 1}'
+  -d '{"name": "Example Item 1 Updated", "list_id": 1}'
 ```
 
 #### Updating an item for a specific meal
@@ -306,7 +361,7 @@ $ curl -X PATCH http://shopper.test/api/items/1 \
   -H 'Authorization: Bearer YOUR_API_TOKEN' \
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json' \
-  -d '{"name": "Example Item One Updated", "meal_id": 1}'
+  -d '{"name": "Example Item 1 Updated", "meal_id": 1}'
 ```
 
 When updating an item for a specific list or meal, if the item is used elsewhere on another list or meal, this needs to be preserved. Therefore, instead of updating the item, we detach it from the list or meal and [create](#creating-an-item) a new item to preserve this history. A `201 Created` status is returned in this scenario along with the new item in the response body.
@@ -318,7 +373,7 @@ If the item hasn't been used elsewhere, the item is updated and a `200 OK` statu
 Use the `DELETE` method to delete an item through the API. In this example we'll delete the item with ID `1`.
 
 ```
-$ curl -X PATCH http://shopper.test/api/items/1 \
+$ curl -X DELETE http://shopper.test/api/items/1 \
   -H 'Authorization: Bearer YOUR_API_TOKEN' \
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json'
@@ -353,6 +408,14 @@ $ curl -X DELETE http://shopper.test/api/items/1 \
   -d '{"meal_id": 1}'
 ```
 
-When deleting an item from a specific list or meal, if it is used elsewhere then it is preserved and remains an item on this list or meal. If the item isn't used elsewhere it is deleted from your account.
+When deleting an item from a specific list or meal, if it is used elsewhere then this is preserved and it will remain an item on this list or meal. If the item isn't used elsewhere it is deleted from your account.
 
 For all `DELETE` requests a `204 No Content` status is returned with an empty response body.
+
+### Completing an item on a list
+
+...
+
+### Incompleting an item on a list
+
+...
