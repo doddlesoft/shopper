@@ -37,9 +37,92 @@ The response body contains all the details for every meal you've ever created.
 }
 ```
 
-### Getting a specific meal
+### Get a specific meal
 
-...
+If you don't want to get all meals, you can get a specifc meal if you know its ID. Send a `GET` request to the `/api/meals/{id}` endpoint including the meal ID in the URL.
+
+```
+$ curl -X POST http://shopper.test/api/meals/1 \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json'
+```
+
+If your request succeeds, the meal will be returned in the response body.
+
+<!-- lineNumbers: false -->
+```json
+{
+  "data": {
+    "id": 1,
+    "user_id": 1,
+    "name": "Example Meal 1",
+    "created_at": "2020-06-01T12:00:00.000000Z",
+    "updated_at": "2020-06-01T12:00:00.000000Z"
+  }
+}
+```
+
+<!-- theme: info -->
+> Notice how this result differs slightly from the response body when getting meals. It no longer wraps the meals in an array, the data key is just an object of the meal attributes.
+
+#### Including meal items and/or list
+
+When getting a specific meal you also have the option of including related resources in the response body, your two options for a meal are:
+
+- `items` - the items that have been created or added to the meal.
+- `lists` - the lists that the meal has been added to.
+
+In order to include a relationship in the response you can use the `include` query parameter and give it one of the values above.
+
+```
+$ curl -X POST http://shopper.test/api/meals/1?include=items \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json'
+```
+
+You can also include both values seperating them by a comma.
+
+```
+$ curl -X POST http://shopper.test/api/meals/1?include=items,lists \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json'
+```
+
+The response body returned from these requests will simply add a new key to the data object that includes an array of objects for each item or list related to the meal.
+
+<!-- lineNumbers: false -->
+```json
+{
+  "data": {
+    "id": 1,
+    "user_id": 1,
+    "name": "Example Meal 1",
+    "created_at": "2020-06-01T12:00:00.000000Z",
+    "updated_at": "2020-06-01T12:00:00.000000Z",
+    "items": [
+      {
+          "id": 1,
+          "user_id": 1,
+          "name": "Example Item 1",
+          "created_at": "2020-06-15T09:37:14.000000Z",
+          "updated_at": "2020-06-15T09:40:13.000000Z"
+      }
+    ],
+    "lists": [
+      {
+          "id": 1,
+          "user_id": 1,
+          "name": "Example List 1",
+          "created_at": "2020-06-15T09:37:14.000000Z",
+          "updated_at": "2020-06-15T09:40:13.000000Z"
+      }
+    ]
+  }
+}
+```
 
 ### Creating a meal
 

@@ -414,8 +414,32 @@ For all `DELETE` requests a `204 No Content` status is returned with an empty re
 
 ### Completing an item on a list
 
-...
+To complete an item on a list send a `POST` request to the `/api/completed-items` endpoint.
+
+You need to include the ID of the item you'd like to complete and the ID of the list this is on in the request payload.
+
+```
+$ curl -X POST http://shopper.test/api/completed-items \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{"item_id": 1, "list_id": 1}'
+```
+
+This request will complete the item with an ID of `1` on the list with ID `1`. If your request succeeds, the item will be marked as completed and you will receive a `204 No Content` response.
 
 ### Incompleting an item on a list
 
-...
+If you would like to incomplete an item after it has been completed you can send a `DELETE` request to `/api/completed-items/{id}`.
+
+You need to include the ID of the item you're incompleting in the URL and the list ID this is on in the request payload.
+
+```
+$ curl -X DELETE http://shopper.test/api/completed-items/1 \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{"list_id": 1}'
+```
+
+If your request succeeds, the item will be marked as incomplete and you will receive a `204 No Content` response status.
