@@ -195,4 +195,4 @@ $ curl -X DELETE http://shopper.test/api/meals/1 \
 Notice how we're calling the `DELETE` method on the `/api/meals/1` endpoint. The `1` in the URL determines which meal to delete.
 
 <!-- theme: warning -->
-> Please note, when deleting a meal, this will also detach all items from the meal and delete any items that aren't used anywhere else in your account. Just another way we keep our data nice and clean.
+> Please note, when deleting a meal, this will detach all items from the meal and delete any items that aren't used anywhere else in your account. It will also detach the meal from any lists it has previously been added to. Just another way we keep our data nice and clean.
