@@ -156,7 +156,7 @@ class CompletedItemControllerTest extends TestCase
     {
         return [
             'Item ID is required' => ['item_id', null],
-            'Item ID must be an integer' => ['item_id', 'String'],
+            'Item ID is an integer' => ['item_id', 'String'],
             'Item ID exists in items table' => ['item_id', 1],
         ];
     }
@@ -165,7 +165,7 @@ class CompletedItemControllerTest extends TestCase
     {
         return [
             'List ID is required' => ['list_id', null],
-            'List ID must be an integer' => ['list_id', 'String'],
+            'List ID is an integer' => ['list_id', 'String'],
             'List ID exists in lists table' => ['list_id', 1],
         ];
     }

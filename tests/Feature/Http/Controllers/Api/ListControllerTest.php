@@ -401,7 +401,7 @@ class ListControllerTest extends TestCase
     public function onlyIncompleteInputValidation()
     {
         return [
-            'Only Incomplete must be a boolean' => ['only_incomplete', 'String'],
+            'Only Incomplete is a boolean' => ['only_incomplete', 'String'],
         ];
     }
 }

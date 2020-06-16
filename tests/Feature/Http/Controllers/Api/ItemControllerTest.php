@@ -931,7 +931,7 @@ class ItemControllerTest extends TestCase
     {
         return [
             'Item ID is required when no name is provided' => ['item_id', null],
-            'Item ID must be an integer' => ['item_id', 'String'],
+            'Item ID is an integer' => ['item_id', 'String'],
             'Item ID exists in items table' => ['item_id', 1],
         ];
     }

@@ -16,7 +16,7 @@ $factory->define(User::class, function (Faker $faker) {
 
 $factory->afterCreatingState(User::class, 'with_token', function ($user) {
     $user->tokens()->create([
-        'name' => $user->name.' Token',
+        'name' => $user->name.' Test Token',
         'token' => hash('sha256', 'token'.$user->id), // token1, token2 ...
         'abilities' => ['*'],
     ]);
