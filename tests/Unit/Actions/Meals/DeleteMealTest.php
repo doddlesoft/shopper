@@ -42,6 +42,23 @@ class DeleteMealTest extends TestCase
     }
 
     /** @test */
+    public function the_shopping_list_meals_are_also_detached()
+    {
+        $item = factory(Item::class)->create(['name' => 'Test Meal Item']);
+        $meal = factory(Meal::class)->create(['name' => 'Test Meal']);
+        $meal->items()->attach($item);
+        $list = factory(Liste::class)->create(['name' => 'Test Shopping List']);
+        $list->items()->attach($item);
+        $list->meals()->attach($meal);
+
+        app(DeleteMeal::class)->perform($meal);
+
+        $this->assertDatabaseMissing('meals', ['name' => 'Test Meal']);
+        $this->assertEquals(0, Meal::count());
+        $this->assertDatabaseMissing('list_meal', ['list_id' => $list->id, 'meal_id' => $meal->id]);
+    }
+
+    /** @test */
     public function deleting_a_meal_that_contains_an_item_used_elsewhere_only_detaches_that_item_from_the_specified_list()
     {
         $item1 = factory(Item::class)->create(['name' => 'First Item']);

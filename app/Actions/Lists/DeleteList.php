@@ -15,6 +15,8 @@ class DeleteList
                 ->perform($item);
         });
 
+        $list->meals()->detach();
+
         $list->delete();
     }
 }
