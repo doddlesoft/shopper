@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 
 Route::namespace('Api')->group(function () {
+    Route::post('register', 'RegisterController')->name('register');
+    Route::post('sign-in', 'SignInController')->name('sign-in');
+
     Route::group(['middleware' => ['auth:sanctum']], function () {
         // Items
         Route::get('items', 'ItemController@index')->middleware('can:viewAny,App\Item')->name('items.index');
