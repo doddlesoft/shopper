@@ -8,20 +8,22 @@ use App\Liste;
 class CreateList
 {
     private $list;
+    private $newList;
     private $onlyIncomplete = false;
 
     public function perform(string $name): Liste
     {
-        $list = Liste::create([
+        $this->newList = Liste::create([
             'user_id' => auth()->id(),
             'name' => $name,
         ]);
 
         if ($this->list !== null) {
-            $this->copyItems($list);
+            $this->copyItems();
+            $this->copyMeals();
         }
 
-        return $list;
+        return $this->newList;
     }
 
     public function from(Liste $list): self
@@ -38,7 +40,7 @@ class CreateList
         return $this;
     }
 
-    private function copyItems($list)
+    private function copyItems()
     {
         $this
             ->list
@@ -46,11 +48,31 @@ class CreateList
             ->when($this->onlyIncomplete, function ($items) {
                 return $items->whereNull('pivot.completed_at');
             })
-            ->each(function ($item) use ($list) {
+            ->each(function ($item) {
                 app(CreateItem::class)
                     ->from($item)
-                    ->for($list)
+                    ->for($this->newList)
                     ->perform();
             });
+    }
+
+    private function copyMeals()
+    {
+        $this
+            ->list
+            ->meals
+            ->when($this->onlyIncomplete, function ($meals) {
+                return $meals->filter(function ($meal) {
+                    return $this->mealIsRequiredOnNewList($meal);
+                });
+            })
+            ->each(function ($meal) {
+                $this->newList->meals()->attach($meal);
+            });
+    }
+
+    private function mealIsRequiredOnNewList($meal)
+    {
+        return $this->newList->items->pluck('id')->intersect($meal->items->pluck('id'))->count() > 0;
     }
 }

@@ -182,6 +182,9 @@ $ curl -X POST http://shopper.test/api/lists \
 
 The response body for both of these requests is exactly the same as when you create a brand new list, it will return the newly create list only.
 
+<!--- theme:warning -->
+> When copying only incomplete items, if there are no items on the new list for a meal that was on the previous list, this meal will not be copied. If there are some, or all items on the new list for a meal, then the meal will be copied to the new list.
+
 ### Updating a list
 
 To update a list send a `PATCH` request to the `/api/lists/{id}` endpoint containing the new name of the list in the request payload.
