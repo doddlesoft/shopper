@@ -37,7 +37,11 @@ class ListePolicy
 
     public function addMeal(User $user)
     {
-        return request()->filled('meal_id') &&
-            $user->id === (int) Meal::find(request()->input('meal_id'))->user_id;
+        return $user->id === (int) Meal::find(request()->input('meal_id'))->user_id;
+    }
+
+    public function deleteMeal(User $user)
+    {
+        return $user->id === (int) Meal::find(request()->input('meal_id'))->user_id;
     }
 }

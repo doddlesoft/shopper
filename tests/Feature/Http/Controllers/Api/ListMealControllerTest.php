@@ -112,11 +112,89 @@ class ListMealControllerTest extends TestCase
         ]);
     }
 
+    /** @test */
+    public function deleting_a_list_meal()
+    {
+        $user = factory(User::class)->create();
+        $list = factory(Liste::class)->create(['user_id' => $user->id, 'name' => 'Shopping List']);
+        $meal = factory(Meal::class)->create(['user_id' => $user->id, 'name' => 'Meal']);
+        $list->meals()->attach($meal);
+
+        Sanctum::actingAs($user, ['*']);
+
+        $response = $this->deleteJson(route('list-meals.destroy', $list), ['meal_id' => $meal->id]);
+
+        $response->assertStatus(204);
+
+        $this->assertDatabaseMissing('list_meal', [
+            'list_id' => $list->id,
+            'meal_id' => $meal->id,
+        ]);
+    }
+
+    /** @test */
+    public function deleting_a_list_meal_from_a_list_that_isnt_the_logged_in_users_returns_a_403()
+    {
+        $user1 = factory(User::class)->create();
+        $user2 = factory(User::class)->create();
+        $list = factory(Liste::class)->create(['user_id' => $user1->id, 'name' => 'Shopping List']);
+        $meal = factory(Meal::class)->create(['user_id' => $user1->id, 'name' => 'Meal']);
+        $list->meals()->attach($meal);
+
+        Sanctum::actingAs($user2, ['*']);
+
+        $response = $this->deleteJson(route('list-meals.destroy', $list), ['meal_id' => $meal->id]);
+
+        $response->assertStatus(403);
+
+        $this->assertDatabaseHas('list_meal', [
+            'list_id' => $list->id,
+            'meal_id' => $meal->id,
+        ]);
+    }
+
+    /** @test */
+    public function deleting_a_list_meal_for_a_meal_that_isnt_the_logged_in_users_returns_a_403()
+    {
+        $user1 = factory(User::class)->create();
+        $user2 = factory(User::class)->create();
+        $list = factory(Liste::class)->create(['user_id' => $user1->id, 'name' => 'Shopping List']);
+        $meal = factory(Meal::class)->create(['user_id' => $user2->id, 'name' => 'Meal']);
+        $list->meals()->attach($meal);
+
+        Sanctum::actingAs($user1, ['*']);
+
+        $response = $this->deleteJson(route('list-meals.destroy', $list), ['meal_id' => $meal->id]);
+
+        $response->assertStatus(403);
+
+        $this->assertDatabaseHas('list_meal', [
+            'list_id' => $list->id,
+            'meal_id' => $meal->id,
+        ]);
+    }
+
     /**
      * @test
      * @dataProvider mealIdInputValidation
      */
     public function test_store_form_validation($formInput, $formInputValue)
+    {
+        $list = factory(Liste::class)->create();
+
+        Sanctum::actingAs($list->user, ['*']);
+
+        $response = $this->postJson(route('list-meals.store', $list), [$formInput => $formInputValue]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors($formInput);
+    }
+
+    /**
+     * @test
+     * @dataProvider mealIdInputValidation
+     */
+    public function test_delete_form_validation($formInput, $formInputValue)
     {
         $list = factory(Liste::class)->create();
 

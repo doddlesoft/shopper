@@ -20,6 +20,7 @@ Route::namespace('Api')->group(function () {
         Route::delete('lists/{list}', 'ListController@destroy')->middleware('can:delete,list')->name('lists.destroy');
         Route::get('list-meals/{list}', 'ListMealController@index')->middleware('can:view,list')->name('list-meals.index');
         Route::post('list-meals/{list}', 'ListMealController@store')->name('list-meals.store');
+        Route::delete('list-meals/{list}', 'ListMealController@destroy')->name('list-meals.destroy');
 
         // Meals
         Route::get('meals', 'MealController@index')->name('meals.index');
