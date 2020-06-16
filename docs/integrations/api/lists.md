@@ -276,3 +276,16 @@ $ curl -X POST http://shopper.test/api/list-meals/1 \
 ```
 
 This will not only attach the meal to the list but also all of its items as well. If successful, you will receive a `204 No Content` response from this endpoint.
+
+### Deleting a meal from a list
+
+To delete a meal from a list you can send a `DELETE` request to the same endpoint `/api/list-meals/{id}` and include the `meal_id` in the request payload.
+
+```
+$ curl -X DELETE http://shopper.test/api/list-meals/1 \
+  -H 'Authorization: Bearer YOUR_API_TOKEN' \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{"meal_id": 1}'
+```
+This will not only detach the meal from the list but also remove all of the meal items as well. If successful, you will receive a `204 No Content` response from this endpoint.
