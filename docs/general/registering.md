@@ -1,0 +1,3 @@
+# Registering for a Shopper account
+
+...
