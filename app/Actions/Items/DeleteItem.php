@@ -13,15 +13,11 @@ class DeleteItem
     {
         if ($this->itemable !== null) {
             $this->itemable->items()->detach($item);
+            return;
         }
 
-        if ($this->itemable === null) {
-            $item->itemables()->delete();
-        }
-
-        if ($item->itemables->count() === 0) {
-            $item->delete();
-        }
+        $item->itemables()->delete();
+        $item->delete();
     }
 
     public function from(Model $itemable): self

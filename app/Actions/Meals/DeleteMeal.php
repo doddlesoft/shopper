@@ -16,7 +16,6 @@ class DeleteMeal
         });
 
         $meal->lists()->detach();
-
         $meal->delete();
     }
 }

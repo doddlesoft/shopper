@@ -3,6 +3,7 @@
 namespace Tests\Feature\Http\Controllers\Api;
 
 use App\Item;
+use App\Itemable;
 use App\Liste;
 use App\Meal;
 use App\User;
@@ -868,9 +869,10 @@ class ItemControllerTest extends TestCase
 
         $response->assertStatus(204);
 
-        $this->assertDatabaseMissing('items', ['name' => 'Test Shopping List Item']);
-        $this->assertEquals(0, Item::count());
         $this->assertEquals(0, $list->items->count());
+        $this->assertEquals(0, Itemable::count());
+        $this->assertDatabaseHas('items', ['name' => 'Test Shopping List Item']);
+        $this->assertEquals(1, Item::count());
     }
 
     /** @test */
@@ -890,9 +892,10 @@ class ItemControllerTest extends TestCase
 
         $response->assertStatus(204);
 
-        $this->assertDatabaseMissing('items', ['name' => 'Test Meal Item']);
-        $this->assertEquals(0, Item::count());
         $this->assertEquals(0, $meal->items->count());
+        $this->assertEquals(0, Itemable::count());
+        $this->assertDatabaseHas('items', ['name' => 'Test Meal Item']);
+        $this->assertEquals(1, Item::count());
     }
 
     /**

@@ -408,7 +408,7 @@ $ curl -X DELETE http://shopper.test/api/items/1 \
   -d '{"meal_id": 1}'
 ```
 
-When deleting an item from a specific list or meal, if it is used elsewhere then this is preserved and it will remain an item on this list or meal. If the item isn't used elsewhere it is deleted from your account.
+When deleting an item from a specific list or meal, if it is used elsewhere then this is preserved and it will remain an item on this list or meal.
 
 For all `DELETE` requests a `204 No Content` status is returned with an empty response body.
 

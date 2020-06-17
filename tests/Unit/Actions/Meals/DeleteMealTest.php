@@ -34,11 +34,16 @@ class DeleteMealTest extends TestCase
 
         app(DeleteMeal::class)->perform($meal);
 
-        $this->assertDatabaseMissing('items', ['name' => 'Test Meal Item']);
-        $this->assertEquals(0, Item::count());
         $this->assertDatabaseMissing('meals', ['name' => 'Test Meal']);
         $this->assertEquals(0, Meal::count());
+        $this->assertDatabaseMissing('itemables', [
+            'item_id' => $item->id,
+            'itemable_id' => $meal->id,
+            'itemable_type' => 'meals',
+        ]);
         $this->assertEquals(0, Itemable::count());
+        $this->assertDatabaseHas('items', ['name' => 'Test Meal Item']);
+        $this->assertEquals(1, Item::count());
     }
 
     /** @test */
@@ -56,44 +61,5 @@ class DeleteMealTest extends TestCase
         $this->assertDatabaseMissing('meals', ['name' => 'Test Meal']);
         $this->assertEquals(0, Meal::count());
         $this->assertDatabaseMissing('list_meal', ['list_id' => $list->id, 'meal_id' => $meal->id]);
-    }
-
-    /** @test */
-    public function deleting_a_meal_that_contains_an_item_used_elsewhere_only_detaches_that_item_from_the_specified_list()
-    {
-        $item1 = factory(Item::class)->create(['name' => 'First Item']);
-        $item2 = factory(Item::class)->create(['name' => 'Second Item']);
-        $meal = factory(Meal::class)->create(['name' => 'Meal']);
-        $meal->items()->attach($item1);
-        $meal->items()->attach($item2);
-        $list = factory(Liste::class)->create(['name' => 'Shopping List']);
-        $list->items()->attach($item1);
-
-        app(DeleteMeal::class)->perform($meal);
-
-        $this->assertDatabaseHas('items', ['name' => 'First Item']);
-        $this->assertDatabaseMissing('items', ['name' => 'Second Item']);
-        $this->assertEquals(1, Item::count());
-        $this->assertDatabaseMissing('meals', ['name' => 'Meal']);
-        $this->assertEquals(0, Meal::count());
-        $this->assertDatabaseMissing('itemables', [
-            'item_id' => $item1->id,
-            'itemable_id' => $meal->id,
-            'itemable_type' => 'meals',
-        ]);
-        $this->assertDatabaseMissing('itemables', [
-            'item_id' => $item2->id,
-            'itemable_id' => $meal->id,
-            'itemable_type' => 'meals',
-        ]);
-        $this->assertDatabaseHas('lists', ['name' => 'Shopping List']);
-        $this->assertEquals(1, Liste::count());
-        $this->assertEquals(1, $list->items->count());
-        $this->assertDatabaseHas('itemables', [
-            'item_id' => $item1->id,
-            'itemable_id' => $list->id,
-            'itemable_type' => 'lists',
-        ]);
-        $this->assertEquals(1, Itemable::count());
     }
 }
