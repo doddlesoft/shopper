@@ -13,6 +13,7 @@ class DeleteItem
     {
         if ($this->itemable !== null) {
             $this->itemable->items()->detach($item);
+
             return;
         }
 
