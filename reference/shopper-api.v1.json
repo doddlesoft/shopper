@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Shopper API",
+    "title": "Shopper API Reference",
     "version": "1.0",
     "description": "API reference for the Shopper API.",
     "contact": {
