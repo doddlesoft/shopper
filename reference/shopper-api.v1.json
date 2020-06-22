@@ -16,6 +16,24 @@
       "url": "http://shopper.test/api"
     }
   ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Everything about Authentication"
+    },
+    {
+      "name": "Items",
+      "description": "Everything about Items"
+    },
+    {
+      "name": "Lists",
+      "description": "Everything about Lists"
+    },
+    {
+      "name": "Meals",
+      "description": "Everything about Meals"
+    }
+  ],
   "paths": {
     "/items": {
       "get": {
@@ -82,6 +100,9 @@
             "name": "filter",
             "description": "The resource type and ID, seperated by a colon, to filter the results by."
           }
+        ],
+        "tags": [
+          "Items"
         ]
       },
       "post": {
@@ -153,18 +174,14 @@
                     "description": "The name of the Item."
                   },
                   "list_id": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "The List ID the Item is being created on."
+                    "type": "integer",
+                    "description": "The List ID the Item is being created on.",
+                    "default": null
                   },
                   "meal_id": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "The Meal ID the Item is being created on."
+                    "type": "integer",
+                    "description": "The Meal ID the Item is being created on.",
+                    "default": null
                   }
                 },
                 "required": [
@@ -175,7 +192,10 @@
             }
           },
           "description": ""
-        }
+        },
+        "tags": [
+          "Items"
+        ]
       },
       "parameters": []
     },
@@ -244,18 +264,14 @@
                     "description": "The new name of the Item."
                   },
                   "list_id": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "The List ID the Item is being updated on."
+                    "type": "integer",
+                    "description": "The List ID the Item is being updated on.",
+                    "default": null
                   },
                   "meal_id": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "The Meal ID the Item is being updated on."
+                    "type": "integer",
+                    "description": "The Meal ID the Item is being updated on.",
+                    "default": null
                   }
                 },
                 "required": [
@@ -265,7 +281,10 @@
             }
           },
           "description": ""
-        }
+        },
+        "tags": [
+          "Items"
+        ]
       },
       "delete": {
         "summary": "Delete Item",
@@ -304,25 +323,24 @@
                 "type": "object",
                 "properties": {
                   "list_id": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "The List ID the Item is being deleted from."
+                    "type": "integer",
+                    "description": "The List ID the Item is being deleted from.",
+                    "default": null
                   },
                   "meal_id": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "The Meal ID the Item is being deleted from."
+                    "type": "integer",
+                    "description": "The Meal ID the Item is being deleted from.",
+                    "default": null
                   }
                 }
               }
             }
           },
           "description": ""
-        }
+        },
+        "tags": [
+          "Items"
+        ]
       }
     },
     "/lists": {
@@ -348,7 +366,10 @@
           }
         },
         "operationId": "get-lists",
-        "description": "Get a collection of Lists."
+        "description": "Get a collection of Lists.",
+        "tags": [
+          "Lists"
+        ]
       },
       "post": {
         "summary": "Create List",
@@ -402,18 +423,14 @@
                     "description": "The name of the List."
                   },
                   "list_id": {
+                    "type": "integer",
                     "description": "The List ID the new List should copy.",
-                    "type": [
-                      "integer",
-                      "null"
-                    ]
+                    "default": null
                   },
                   "only_incomplete": {
-                    "type": [
-                      "boolean",
-                      "null"
-                    ],
-                    "description": "When copying a List only include incomplete Items when set to true, otherwise copy all Items."
+                    "type": "boolean",
+                    "description": "When copying a List only include incomplete Items when set to true, otherwise copy all Items.",
+                    "default": null
                   }
                 },
                 "required": [
@@ -422,7 +439,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Lists"
+        ]
       }
     },
     "/lists/{id}": {
@@ -471,6 +491,9 @@
             "name": "include",
             "description": "The resources related to a List to be included in the result."
           }
+        ],
+        "tags": [
+          "Lists"
         ]
       },
       "patch": {
@@ -533,6 +556,9 @@
             "name": "Content-Type",
             "required": true
           }
+        ],
+        "tags": [
+          "Lists"
         ]
       },
       "delete": {
@@ -543,7 +569,10 @@
             "description": "No Content"
           }
         },
-        "description": "Delete a List."
+        "description": "Delete a List.",
+        "tags": [
+          "Lists"
+        ]
       }
     },
     "/meals": {
@@ -569,7 +598,10 @@
           }
         },
         "operationId": "get-meals",
-        "description": "Get a collection of Meals."
+        "description": "Get a collection of Meals.",
+        "tags": [
+          "Meals"
+        ]
       },
       "post": {
         "summary": "Create Meal",
@@ -629,7 +661,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Meals"
+        ]
       }
     },
     "/meals/{id}": {
@@ -678,7 +713,10 @@
             "description": "The resources related to a Meal to be included in the result."
           }
         ],
-        "description": "Get a single Meal."
+        "description": "Get a single Meal.",
+        "tags": [
+          "Meals"
+        ]
       },
       "patch": {
         "summary": "Update Meal",
@@ -739,7 +777,10 @@
           },
           "description": ""
         },
-        "description": "Update a Meal."
+        "description": "Update a Meal.",
+        "tags": [
+          "Meals"
+        ]
       },
       "delete": {
         "summary": "Delete Meal",
@@ -749,7 +790,10 @@
             "description": "No Content"
           }
         },
-        "description": "Delete a Meal."
+        "description": "Delete a Meal.",
+        "tags": [
+          "Meals"
+        ]
       }
     },
     "/completed-items": {
@@ -804,6 +848,9 @@
             "name": "Content-Type",
             "required": true
           }
+        ],
+        "tags": [
+          "Items"
         ]
       }
     },
@@ -865,6 +912,9 @@
             "name": "Content-Type",
             "required": true
           }
+        ],
+        "tags": [
+          "Items"
         ]
       }
     },
@@ -891,7 +941,10 @@
           }
         },
         "operationId": "get-list-meals",
-        "description": "Get a collection of Meals related to the List."
+        "description": "Get a collection of Meals related to the List.",
+        "tags": [
+          "Lists"
+        ]
       },
       "parameters": [
         {
@@ -950,7 +1003,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Lists"
+        ]
       },
       "delete": {
         "summary": "",
@@ -998,7 +1054,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Lists"
+        ]
       }
     },
     "/register": {
@@ -1081,7 +1140,10 @@
             }
           },
           "description": ""
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/sign-in": {
@@ -1154,7 +1216,10 @@
             }
           },
           "description": ""
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     }
   },
@@ -1201,7 +1266,10 @@
             "created_at": "2020-06-01T12:00:00.000000Z",
             "updated_at": "2020-06-01T12:00:00.000000Z"
           }
-        }
+        },
+        "x-tags": [
+          "Items"
+        ]
       },
       "Liste": {
         "title": "Liste",
@@ -1244,7 +1312,10 @@
             "created_at": "2020-06-01T12:00:00.000000Z",
             "updated_at": "2020-06-01T12:00:00.000000Z"
           }
-        }
+        },
+        "x-tags": [
+          "Lists"
+        ]
       },
       "Meal": {
         "title": "Meal",
@@ -1287,7 +1358,10 @@
             "created_at": "2020-06-01T12:00:00.000000Z",
             "updated_at": "2020-06-01T12:00:00.000000Z"
           }
-        }
+        },
+        "x-tags": [
+          "Meals"
+        ]
       },
       "User": {
         "title": "User",
@@ -1347,6 +1421,9 @@
           "name",
           "email",
           "password"
+        ],
+        "x-tags": [
+          "Auth"
         ]
       },
       "PersonalAccessToken": {
@@ -1413,6 +1490,9 @@
           "tokenable_id",
           "name",
           "token"
+        ],
+        "x-tags": [
+          "Auth"
         ]
       }
     },
