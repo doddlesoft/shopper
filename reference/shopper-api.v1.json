@@ -1003,7 +1003,7 @@
     },
     "/register": {
       "post": {
-        "summary": "",
+        "summary": "Register",
         "operationId": "post-register",
         "responses": {
           "200": {
@@ -1086,7 +1086,7 @@
     },
     "/sign-in": {
       "post": {
-        "summary": "",
+        "summary": "Sign In",
         "operationId": "post-sign-in",
         "responses": {
           "200": {
