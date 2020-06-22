@@ -798,7 +798,7 @@
     },
     "/completed-items": {
       "post": {
-        "summary": "Complete Item on List",
+        "summary": "Mark Item as Complete",
         "operationId": "post-completed-items",
         "responses": {
           "204": {
@@ -867,7 +867,7 @@
         }
       ],
       "delete": {
-        "summary": "Incomplete Item on List",
+        "summary": "Mark Item as Incomplete",
         "operationId": "delete-completed-item",
         "responses": {
           "204": {
