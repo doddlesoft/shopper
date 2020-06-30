@@ -15,7 +15,7 @@ class ListController
 {
     public function index(): ListCollection
     {
-        return new ListCollection(auth()->user()->lists);
+        return new ListCollection(request()->user()->lists);
     }
 
     public function store(ListRequest $request, CreateList $action): ListResource

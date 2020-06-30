@@ -13,7 +13,7 @@ class CreateItemablesTable extends Migration
             $table->unsignedBigInteger('item_id');
             $table->unsignedBigInteger('itemable_id');
             $table->string('itemable_type');
-            $table->timestamp('completed_at', 0)->nullable();
+            $table->timestamp('completed_at')->nullable();
             $table->timestamps();
         });
     }

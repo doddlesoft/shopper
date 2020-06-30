@@ -23,7 +23,7 @@ class ItemController
         $sortDirection = Str::startsWith($sortColumn, '-') ? 'desc' : 'asc';
         $sortColumn = ltrim($sortColumn, '-');
 
-        $query = auth()
+        $query = request()
             ->user()
             ->items()
             ->select(['items.*'])
