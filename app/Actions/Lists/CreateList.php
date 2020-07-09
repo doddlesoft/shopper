@@ -4,6 +4,7 @@ namespace App\Actions\Lists;
 
 use App\Actions\Items\CreateItem;
 use App\Liste;
+use App\Meal;
 
 class CreateList
 {
@@ -71,7 +72,7 @@ class CreateList
             });
     }
 
-    private function mealIsRequiredOnNewList($meal)
+    private function mealIsRequiredOnNewList(Meal $meal)
     {
         return $this->newList->items->pluck('id')->intersect($meal->items->pluck('id'))->count() > 0;
     }

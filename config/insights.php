@@ -94,7 +94,6 @@ return [
             'lineLimit' => 140,
             'absoluteLineLimit' => 200,
         ],
-
     ],
 
     /*
