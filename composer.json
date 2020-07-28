@@ -59,6 +59,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
+        "coverage": "./vendor/bin/phpunit --coverage-html coverage-report",
         "fix": "./vendor/bin/php-cs-fixer fix",
         "insights": "php artisan insights",
         "lint": "tlint",
